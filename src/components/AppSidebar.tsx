@@ -28,10 +28,10 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Influencers", url: "/influencers", icon: Users },
-  { title: "Campaigns", url: "/campaigns", icon: Target },
-  { title: "Content", url: "/content", icon: Calendar },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Content Management", url: "/content", icon: Calendar },
+  { title: "Influencers", url: "/influencers", icon: Users, comingSoon: true },
+  { title: "Campaigns", url: "/campaigns", icon: Target, comingSoon: true },
+  { title: "Analytics", url: "/analytics", icon: BarChart3, comingSoon: true },
 ];
 
 const quickActions = [
@@ -39,6 +39,10 @@ const quickActions = [
   { title: "New Campaign", url: "/campaigns/new", icon: Plus },
   { title: "Top Performers", url: "/top-performers", icon: Star },
   { title: "Trending", url: "/trending", icon: TrendingUp },
+  { title: "Content Calendar", url: "/calendar", icon: Calendar },
+  { title: "Brand Assets", url: "/assets", icon: Target },
+  { title: "Reports", url: "/reports", icon: BarChart3 },
+  { title: "Templates", url: "/templates", icon: Users },
 ];
 
 export function AppSidebar() {
@@ -70,7 +74,7 @@ export function AppSidebar() {
           {!collapsed ? (
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">O</span>
+                <span className="text-primary-foreground font-bold text-sm">🚀</span>
               </div>
               <span className="font-bold text-lg bg-gradient-primary bg-clip-text text-transparent">
                 OneInfluence
@@ -78,7 +82,7 @@ export function AppSidebar() {
             </div>
           ) : (
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto">
-              <span className="text-primary-foreground font-bold text-sm">O</span>
+              <span className="text-primary-foreground font-bold text-sm">🚀</span>
             </div>
           )}
         </div>
@@ -93,14 +97,26 @@ export function AppSidebar() {
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end={item.url === "/"}
-                      className={getNavCls}
-                    >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
+                    {item.comingSoon ? (
+                      <div className="w-full justify-start text-muted-foreground/50 cursor-not-allowed flex items-center">
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        {!collapsed && (
+                          <>
+                            <span className="mr-auto">{item.title}</span>
+                            <span className="text-xs bg-muted/50 px-2 py-1 rounded">Soon</span>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <NavLink 
+                        to={item.url} 
+                        end={item.url === "/"}
+                        className={getNavCls}
+                      >
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
