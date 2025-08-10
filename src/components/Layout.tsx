@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Bell, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,9 +20,9 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center justify-between h-full px-6">
               <div className="flex items-center space-x-4">
                 <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-                <h1 className="text-xl font-semibold text-foreground">
-                  OneInfluence
-                </h1>
+                <Link to="/" className="text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
+                  🚀 OneInfluence
+                </Link>
               </div>
               
               <div className="flex items-center space-x-3">
