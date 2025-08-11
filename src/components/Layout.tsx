@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Bell, User, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +44,8 @@ export default function Layout({ children }: LayoutProps) {
               </div>
               
               <div className="flex items-center space-x-3">
+                <ThemeToggle />
+                
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                   <Bell className="h-5 w-5" />
                 </Button>
