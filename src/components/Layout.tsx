@@ -1,14 +1,31 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
-import { Bell, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Bell, User, LogOut } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { user, logout } = useAuth();
+  const location = useLocation();
+  
+  // Don't show layout on landing page and auth page
+  const isPublicPage = location.pathname === '/' || location.pathname === '/auth';
+  
+  if (isPublicPage) {
+    return <>{children}</>;
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gradient-subtle">
@@ -20,7 +37,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center justify-between h-full px-6">
               <div className="flex items-center space-x-4">
                 <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-                <Link to="/" className="text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
+                <Link to="/dashboard" className="text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
                   🚀 OneInfluence
                 </Link>
               </div>
@@ -29,9 +46,23 @@ export default function Layout({ children }: LayoutProps) {
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                   <Bell className="h-5 w-5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                  <User className="h-5 w-5" />
-                </Button>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem disabled className="text-center">
+                      {user?.name || user?.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={logout} className="text-destructive">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </header>
