@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import Confetti from "react-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,12 +18,25 @@ import {
   MessageSquare
 } from "lucide-react";
 
+interface ContentItem {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  assignee: string;
+  dueDate: string;
+  comments: number;
+  platform: string;
+}
+
 export default function ContentManagement() {
   const [view, setView] = useState("board");
+  const [showConfetti, setShowConfetti] = useState(false);
 
-  const contentItems = [
+  const [contentItems, setContentItems] = useState<ContentItem[]>([
     {
-      id: 1,
+      id: "1",
       title: "Summer Collection Post",
       description: "Instagram carousel for new summer collection launch",
       status: "In Review",
@@ -32,7 +47,7 @@ export default function ContentManagement() {
       platform: "Instagram"
     },
     {
-      id: 2,
+      id: "2",
       title: "TikTok Dance Challenge",
       description: "Viral dance content for fitness brand collaboration",
       status: "In Progress",
@@ -43,10 +58,10 @@ export default function ContentManagement() {
       platform: "TikTok"
     },
     {
-      id: 3,
+      id: "3",
       title: "Product Review Video",
       description: "Unboxing and review video for tech gadget",
-      status: "Done",
+      status: "Won",
       priority: "Low",
       assignee: "Emma Davis",
       dueDate: "Aug 5",
@@ -54,7 +69,7 @@ export default function ContentManagement() {
       platform: "YouTube"
     },
     {
-      id: 4,
+      id: "4",
       title: "Brand Story Reel",
       description: "Behind-the-scenes content for brand storytelling",
       status: "To Do",
@@ -64,13 +79,36 @@ export default function ContentManagement() {
       comments: 0,
       platform: "Instagram"
     }
-  ];
+  ]);
 
-  const statusColumns = {
-    "To Do": contentItems.filter(item => item.status === "To Do"),
-    "In Progress": contentItems.filter(item => item.status === "In Progress"),
-    "In Review": contentItems.filter(item => item.status === "In Review"),
-    "Done": contentItems.filter(item => item.status === "Done")
+  const statusOrder = ["To Do", "In Progress", "In Review", "Won", "Loss"];
+
+  const statusColumns = statusOrder.reduce((acc, status) => {
+    acc[status] = contentItems.filter(item => item.status === status);
+    return acc;
+  }, {} as Record<string, ContentItem[]>);
+
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+    const newStatus = destination.droppableId;
+    
+    setContentItems(prev => 
+      prev.map(item => 
+        item.id === draggableId 
+          ? { ...item, status: newStatus }
+          : item
+      )
+    );
+
+    // Show confetti if moved to "Won"
+    if (newStatus === "Won") {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -87,52 +125,73 @@ export default function ContentManagement() {
       case "To Do": return "bg-muted";
       case "In Progress": return "bg-blue-500/10 text-blue-600 border-blue-200";
       case "In Review": return "bg-orange-500/10 text-orange-600 border-orange-200";
-      case "Done": return "bg-green-500/10 text-green-600 border-green-200";
+      case "Won": return "bg-green-500/10 text-green-600 border-green-200";
+      case "Loss": return "bg-red-500/10 text-red-600 border-red-200";
       default: return "bg-muted";
     }
   };
 
-  const ContentCard = ({ item }: { item: typeof contentItems[0] }) => (
-    <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <h4 className="font-semibold text-sm text-foreground">{item.title}</h4>
-          <Button variant="ghost" size="icon" className="h-6 w-6">
-            <MoreHorizontal className="h-3 w-3" />
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground mb-3">{item.description}</p>
-        
-        <div className="flex items-center gap-2 mb-3">
-          <div className={`w-2 h-2 rounded-full ${getPriorityColor(item.priority)}`} />
-          <span className="text-xs text-muted-foreground">{item.priority}</span>
-          <Badge variant="secondary" className="text-xs">{item.platform}</Badge>
-        </div>
-
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <User className="h-3 w-3" />
-            <span>{item.assignee}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {item.comments > 0 && (
-              <div className="flex items-center gap-1">
-                <MessageSquare className="h-3 w-3" />
-                <span>{item.comments}</span>
-              </div>
-            )}
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              <span>{item.dueDate}</span>
+  const ContentCard = ({ item, index }: { item: ContentItem; index: number }) => (
+    <Draggable draggableId={item.id} index={index}>
+      {(provided, snapshot) => (
+        <Card 
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className={`mb-3 hover:shadow-md transition-shadow cursor-pointer ${
+            snapshot.isDragging ? 'rotate-3 shadow-lg' : ''
+          }`}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-2">
+              <h4 className="font-semibold text-sm text-foreground">{item.title}</h4>
+              <Button variant="ghost" size="icon" className="h-6 w-6">
+                <MoreHorizontal className="h-3 w-3" />
+              </Button>
             </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+            <p className="text-xs text-muted-foreground mb-3">{item.description}</p>
+            
+            <div className="flex items-center gap-2 mb-3">
+              <div className={`w-2 h-2 rounded-full ${getPriorityColor(item.priority)}`} />
+              <span className="text-xs text-muted-foreground">{item.priority}</span>
+              <Badge variant="secondary" className="text-xs">{item.platform}</Badge>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <User className="h-3 w-3" />
+                <span>{item.assignee}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {item.comments > 0 && (
+                  <div className="flex items-center gap-1">
+                    <MessageSquare className="h-3 w-3" />
+                    <span>{item.comments}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  <span>{item.dueDate}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </Draggable>
   );
 
   return (
     <div className="space-y-6">
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -182,25 +241,40 @@ export default function ContentManagement() {
           </div>
         </div>
 
-        {/* Board View */}
+        {/* Board View with Drag & Drop */}
         <TabsContent value="board" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Object.entries(statusColumns).map(([status, items]) => (
-              <div key={status} className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground">{status}</h3>
-                  <Badge variant="secondary" className="text-xs">
-                    {items.length}
-                  </Badge>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              {statusOrder.map((status) => (
+                <div key={status} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-foreground">{status}</h3>
+                    <Badge variant="secondary" className="text-xs">
+                      {statusColumns[status].length}
+                    </Badge>
+                  </div>
+                  <Droppable droppableId={status}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`min-h-[200px] space-y-3 p-2 rounded-lg border-2 border-dashed transition-colors ${
+                          snapshot.isDraggingOver 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border/30'
+                        }`}
+                      >
+                        {statusColumns[status].map((item, index) => (
+                          <ContentCard key={item.id} item={item} index={index} />
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
                 </div>
-                <div className="min-h-[200px] space-y-3">
-                  {items.map((item) => (
-                    <ContentCard key={item.id} item={item} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </DragDropContext>
         </TabsContent>
 
         {/* List View */}
