@@ -137,10 +137,30 @@ export default {
 		function({ addUtilities }) {
 			addUtilities({
 				'.story-link': {
-					'@apply': 'relative inline-block after:content-[\'\'] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left'
+					position: 'relative',
+					display: 'inline-block',
+					'&::after': {
+						content: '""',
+						position: 'absolute',
+						width: '100%',
+						transform: 'scaleX(0)',
+						height: '2px',
+						bottom: '0',
+						left: '0',
+						backgroundColor: 'hsl(var(--primary))',
+						transformOrigin: 'bottom right',
+						transition: 'transform 0.3s ease-out'
+					},
+					'&:hover::after': {
+						transform: 'scaleX(1)',
+						transformOrigin: 'bottom left'
+					}
 				},
 				'.hover-scale': {
-					'@apply': 'transition-transform duration-200 hover:scale-105'
+					transition: 'transform 0.2s ease-out',
+					'&:hover': {
+						transform: 'scale(1.05)'
+					}
 				}
 			});
 		}
