@@ -122,7 +122,7 @@ export default function ContentManagement() {
     // Show confetti if moved to "Won"
     if (newStatus === "Won") {
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
+      setTimeout(() => setShowConfetti(false), 5000);
     }
   };
 
@@ -230,7 +230,10 @@ export default function ContentManagement() {
           width={window.innerWidth}
           height={window.innerHeight}
           recycle={false}
-          numberOfPieces={200}
+          numberOfPieces={500}
+          gravity={0.1}
+          initialVelocityY={20}
+          colors={['#8B5CF6', '#A855F7', '#C084FC', '#DDD6FE', '#EDE9FE']}
         />
       )}
 
