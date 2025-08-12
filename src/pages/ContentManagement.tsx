@@ -5,6 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { v4 as uuidv4 } from 'uuid';
 import { 
   Calendar,
   Grid3X3,
@@ -33,6 +39,15 @@ interface ContentItem {
 export default function ContentManagement() {
   const [view, setView] = useState("board");
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showNewContentDialog, setShowNewContentDialog] = useState(false);
+  const [newContentForm, setNewContentForm] = useState({
+    title: "",
+    description: "",
+    priority: "Medium",
+    assignee: "",
+    dueDate: "",
+    platform: "Instagram"
+  });
 
   const [contentItems, setContentItems] = useState<ContentItem[]>([
     {
@@ -109,6 +124,33 @@ export default function ContentManagement() {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
+  };
+
+  const handleCreateContent = () => {
+    if (!newContentForm.title || !newContentForm.description) return;
+    
+    const newContent: ContentItem = {
+      id: uuidv4(),
+      title: newContentForm.title,
+      description: newContentForm.description,
+      status: "To Do",
+      priority: newContentForm.priority,
+      assignee: newContentForm.assignee || "Unassigned",
+      dueDate: newContentForm.dueDate || "TBD",
+      comments: 0,
+      platform: newContentForm.platform
+    };
+
+    setContentItems(prev => [...prev, newContent]);
+    setNewContentForm({
+      title: "",
+      description: "",
+      priority: "Medium",
+      assignee: "",
+      dueDate: "",
+      platform: "Instagram"
+    });
+    setShowNewContentDialog(false);
   };
 
   const getPriorityColor = (priority: string) => {
@@ -205,7 +247,10 @@ export default function ContentManagement() {
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
+          <Button 
+            onClick={() => setShowNewContentDialog(true)}
+            className="bg-gradient-primary hover:shadow-glow transition-smooth"
+          >
             <Plus className="h-4 w-4 mr-2" />
             New Content
           </Button>
@@ -325,6 +370,111 @@ export default function ContentManagement() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* New Content Dialog */}
+      <Dialog open={showNewContentDialog} onOpenChange={setShowNewContentDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Content</DialogTitle>
+            <DialogDescription>
+              Add a new content item to your pipeline.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="title"
+                value={newContentForm.title}
+                onChange={(e) => setNewContentForm(prev => ({ ...prev, title: e.target.value }))}
+                className="col-span-3"
+                placeholder="Content title..."
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                value={newContentForm.description}
+                onChange={(e) => setNewContentForm(prev => ({ ...prev, description: e.target.value }))}
+                className="col-span-3"
+                placeholder="Content description..."
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="platform" className="text-right">
+                Platform
+              </Label>
+              <Select 
+                value={newContentForm.platform} 
+                onValueChange={(value) => setNewContentForm(prev => ({ ...prev, platform: value }))}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select platform" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Instagram">Instagram</SelectItem>
+                  <SelectItem value="TikTok">TikTok</SelectItem>
+                  <SelectItem value="YouTube">YouTube</SelectItem>
+                  <SelectItem value="Twitter">Twitter</SelectItem>
+                  <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="priority" className="text-right">
+                Priority
+              </Label>
+              <Select 
+                value={newContentForm.priority} 
+                onValueChange={(value) => setNewContentForm(prev => ({ ...prev, priority: value }))}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="assignee" className="text-right">
+                Assignee
+              </Label>
+              <Input
+                id="assignee"
+                value={newContentForm.assignee}
+                onChange={(e) => setNewContentForm(prev => ({ ...prev, assignee: e.target.value }))}
+                className="col-span-3"
+                placeholder="Assignee name..."
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="dueDate" className="text-right">
+                Due Date
+              </Label>
+              <Input
+                id="dueDate"
+                type="date"
+                value={newContentForm.dueDate}
+                onChange={(e) => setNewContentForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" onClick={handleCreateContent}>
+              Create Content
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

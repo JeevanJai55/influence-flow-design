@@ -1,7 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
-import { Bell, User, LogOut } from "lucide-react";
+import { Bell, User, LogOut, Rocket } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -38,8 +38,9 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center justify-between h-full px-6">
               <div className="flex items-center space-x-4">
                 <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-                <Link to="/dashboard" className="text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
-                  🚀 OneInfluence
+                <Link to="/dashboard" className="flex items-center space-x-2 text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
+                  <Rocket className="h-6 w-6 text-primary" />
+                  <span>OneInfluence</span>
                 </Link>
               </div>
               
