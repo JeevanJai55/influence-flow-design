@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Content Management", url: "/content", icon: Calendar },
   { title: "Influencers", url: "/influencers", icon: Users, comingSoon: true },
   { title: "Campaigns", url: "/campaigns", icon: Target, comingSoon: true },
@@ -43,6 +43,7 @@ const quickActions = [
   { title: "Brand Assets", url: "/assets", icon: Target },
   { title: "Reports", url: "/reports", icon: BarChart3 },
   { title: "Templates", url: "/templates", icon: Users },
+  { title: "AI Playground", url: "/playground", icon: Plus },
 ];
 
 export function AppSidebar() {
@@ -52,7 +53,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => {
-    if (path === "/") return currentPath === "/";
+    if (path === "/dashboard") return currentPath === "/dashboard";
     return currentPath.startsWith(path);
   };
 
@@ -65,7 +66,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`border-r border-border/50 ${collapsed ? "w-14" : "w-64"}`}
+      className={`border-r border-border/50 ${collapsed ? "w-14" : "w-64 md:w-64"}`}
       collapsible="icon"
     >
       <SidebarContent className="px-3 py-4">

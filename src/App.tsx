@@ -20,6 +20,7 @@ import Reports from "./pages/Reports";
 import Templates from "./pages/Templates";
 import Influencers from "./pages/Influencers";
 import Campaigns from "./pages/Campaigns";
+import AIPlayground from "./pages/AIPlayground";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -92,6 +93,11 @@ const App = () => (
               <Route path="/campaigns" element={
                 <ProtectedRoute>
                   <Campaigns />
+                </ProtectedRoute>
+              } />
+              <Route path="/playground" element={
+                <ProtectedRoute>
+                  <AIPlayground />
                 </ProtectedRoute>
               } />
               

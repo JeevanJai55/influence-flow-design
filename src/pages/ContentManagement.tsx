@@ -96,7 +96,7 @@ export default function ContentManagement() {
     }
   ]);
 
-  const statusOrder = ["To Do", "In Progress", "In Review", "Won", "Loss"];
+  const statusOrder = ["To Do", "In Progress", "Brainstorming", "In Review", "Won", "Loss"];
 
   const statusColumns = statusOrder.reduce((acc, status) => {
     acc[status] = contentItems.filter(item => item.status === status);
@@ -166,6 +166,7 @@ export default function ContentManagement() {
     switch (status) {
       case "To Do": return "bg-muted";
       case "In Progress": return "bg-blue-500/10 text-blue-600 border-blue-200";
+      case "Brainstorming": return "bg-purple-500/10 text-purple-600 border-purple-200";
       case "In Review": return "bg-orange-500/10 text-orange-600 border-orange-200";
       case "Won": return "bg-green-500/10 text-green-600 border-green-200";
       case "Loss": return "bg-red-500/10 text-red-600 border-red-200";
@@ -224,35 +225,37 @@ export default function ContentManagement() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {showConfetti && (
-        <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
-          recycle={false}
-          numberOfPieces={500}
-          gravity={0.1}
-          initialVelocityY={20}
-          colors={['#8B5CF6', '#A855F7', '#C084FC', '#DDD6FE', '#EDE9FE']}
-        />
+        <div className="fixed inset-0 z-50 pointer-events-none">
+          <Confetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={500}
+            gravity={0.1}
+            initialVelocityY={20}
+            colors={['#8B5CF6', '#A855F7', '#C084FC', '#DDD6FE', '#EDE9FE']}
+          />
+        </div>
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Content Management</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Content Management</h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Plan, create, and track your content pipeline
           </p>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline" className="transition-smooth">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <Button variant="outline" className="transition-smooth text-sm md:text-base">
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
           <Button 
             onClick={() => setShowNewContentDialog(true)}
-            className="bg-gradient-primary hover:shadow-glow transition-smooth"
+            className="bg-gradient-primary hover:shadow-glow transition-smooth text-sm md:text-base"
           >
             <Plus className="h-4 w-4 mr-2" />
             New Content
@@ -292,11 +295,11 @@ export default function ContentManagement() {
         {/* Board View with Drag & Drop */}
         <TabsContent value="board" className="mt-6">
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 overflow-x-auto">
               {statusOrder.map((status) => (
-                <div key={status} className="space-y-3">
+                <div key={status} className="space-y-3 min-w-[280px] md:min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-foreground">{status}</h3>
+                    <h3 className="font-semibold text-foreground text-sm md:text-base">{status}</h3>
                     <Badge variant="secondary" className="text-xs">
                       {statusColumns[status].length}
                     </Badge>
@@ -306,7 +309,7 @@ export default function ContentManagement() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`min-h-[200px] space-y-3 p-2 rounded-lg border-2 border-dashed transition-colors ${
+                        className={`min-h-[200px] space-y-2 md:space-y-3 p-2 rounded-lg border-2 border-dashed transition-colors ${
                           snapshot.isDraggingOver 
                             ? 'border-primary bg-primary/5' 
                             : 'border-border/30'
@@ -329,26 +332,26 @@ export default function ContentManagement() {
         <TabsContent value="list" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>All Content</CardTitle>
+              <CardTitle className="text-lg md:text-xl">All Content</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {contentItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-4 rounded-lg border border-border/30 hover:bg-muted/30 transition-colors">
-                    <div className="flex items-center space-x-4">
+                  <div key={item.id} className="flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 rounded-lg border border-border/30 hover:bg-muted/30 transition-colors gap-3">
+                    <div className="flex items-center space-x-3 md:space-x-4">
                       <div className={`w-3 h-3 rounded-full ${getPriorityColor(item.priority)}`} />
-                      <div>
-                        <h4 className="font-semibold text-foreground">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-foreground text-sm md:text-base">{item.title}</h4>
+                        <p className="text-xs md:text-sm text-muted-foreground">{item.description}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
-                      <Badge variant="secondary">{item.platform}</Badge>
-                      <span className="text-sm text-muted-foreground">{item.assignee}</span>
-                      <span className="text-sm text-muted-foreground">{item.dueDate}</span>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                      <Badge className={`${getStatusColor(item.status)} text-xs`}>{item.status}</Badge>
+                      <Badge variant="secondary" className="text-xs">{item.platform}</Badge>
+                      <span className="text-xs md:text-sm text-muted-foreground">{item.assignee}</span>
+                      <span className="text-xs md:text-sm text-muted-foreground">{item.dueDate}</span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 md:h-8 md:w-8">
+                        <MoreHorizontal className="h-3 w-3 md:h-4 md:w-4" />
                       </Button>
                     </div>
                   </div>
