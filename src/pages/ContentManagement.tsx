@@ -238,37 +238,6 @@ export default function ContentManagement() {
         </div>
       )}
 
-      {/* Brainstorming Section */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-foreground mb-3">Brainstorming Ideas</h2>
-        <Card className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-200 dark:border-purple-800">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="bg-card p-3 rounded-lg border border-border/30">
-                <h4 className="font-medium text-foreground mb-2">Summer Campaign Ideas</h4>
-                <p className="text-sm text-muted-foreground">Beach lifestyle, travel vlogs, summer fashion trends</p>
-              </div>
-              <div className="bg-card p-3 rounded-lg border border-border/30">
-                <h4 className="font-medium text-foreground mb-2">Tech Product Reviews</h4>
-                <p className="text-sm text-muted-foreground">Latest gadgets, unboxing videos, comparison content</p>
-              </div>
-              <div className="bg-card p-3 rounded-lg border border-border/30">
-                <h4 className="font-medium text-foreground mb-2">Fitness Challenges</h4>
-                <p className="text-sm text-muted-foreground">30-day challenges, workout routines, healthy recipes</p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              className="mt-4 border-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
-              onClick={() => setShowNewContentDialog(true)}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Brainstorming Idea
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

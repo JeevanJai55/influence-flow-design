@@ -9,7 +9,9 @@ import {
   Search,
   Plus,
   Star,
-  TrendingUp
+  TrendingUp,
+  Lightbulb,
+  FileText
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -28,7 +30,8 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Content Management", url: "/content", icon: Calendar },
+  { title: "Brainstorming", url: "/brainstorming", icon: Lightbulb },
+  { title: "Content Management", url: "/content", icon: FileText },
   { title: "Influencers", url: "/influencers", icon: Users, comingSoon: true },
   { title: "Campaigns", url: "/campaigns", icon: Target, comingSoon: true },
   { title: "Analytics", url: "/analytics", icon: BarChart3, comingSoon: true },

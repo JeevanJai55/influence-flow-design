@@ -11,6 +11,7 @@ import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ContentManagement from "./pages/ContentManagement";
+import Brainstorming from "./pages/Brainstorming";
 import NewCampaign from "./pages/NewCampaign";
 import TopPerformers from "./pages/TopPerformers";
 import Trending from "./pages/Trending";
@@ -43,6 +44,11 @@ const App = () => (
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/brainstorming" element={
+                <ProtectedRoute>
+                  <Brainstorming />
                 </ProtectedRoute>
               } />
               <Route path="/content" element={

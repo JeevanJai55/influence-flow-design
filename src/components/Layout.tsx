@@ -5,6 +5,7 @@ import { Bell, User, LogOut, Rocket } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import AIChat from "@/components/AIChat";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,12 @@ export default function Layout({ children }: LayoutProps) {
   
   // Don't show layout on landing page and auth page
   const isPublicPage = location.pathname === '/' || location.pathname === '/auth';
+  
+  // Extract current page from pathname for AI context
+  const getCurrentPage = () => {
+    const path = location.pathname.slice(1); // Remove leading slash
+    return path || "dashboard";
+  };
   
   if (isPublicPage) {
     return <>{children}</>;
@@ -76,6 +83,9 @@ export default function Layout({ children }: LayoutProps) {
             {children}
           </main>
         </div>
+        
+        {/* AI Chat - Fixed position across all pages */}
+        <AIChat currentPage={getCurrentPage()} />
       </div>
     </SidebarProvider>
   );
