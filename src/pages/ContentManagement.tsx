@@ -76,7 +76,7 @@ export default function ContentManagement() {
       id: "3",
       title: "Product Review Video",
       description: "Unboxing and review video for tech gadget",
-      status: "Won",
+      status: "Publish",
       priority: "Low",
       assignee: "Emma Davis",
       dueDate: "Aug 5",
@@ -96,7 +96,7 @@ export default function ContentManagement() {
     }
   ]);
 
-  const statusOrder = ["To Do", "In Progress", "Brainstorming", "In Review", "Won", "Loss"];
+  const statusOrder = ["To Do", "In Progress", "In Review", "Publish"];
 
   const statusColumns = statusOrder.reduce((acc, status) => {
     acc[status] = contentItems.filter(item => item.status === status);
@@ -119,10 +119,10 @@ export default function ContentManagement() {
       )
     );
 
-    // Show confetti if moved to "Won"
-    if (newStatus === "Won") {
+    // Show confetti if moved to "Publish"
+    if (newStatus === "Publish") {
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 5000);
+      setTimeout(() => setShowConfetti(false), 8000);
     }
   };
 
@@ -166,10 +166,8 @@ export default function ContentManagement() {
     switch (status) {
       case "To Do": return "bg-muted";
       case "In Progress": return "bg-blue-500/10 text-blue-600 border-blue-200";
-      case "Brainstorming": return "bg-purple-500/10 text-purple-600 border-purple-200";
       case "In Review": return "bg-orange-500/10 text-orange-600 border-orange-200";
-      case "Won": return "bg-green-500/10 text-green-600 border-green-200";
-      case "Loss": return "bg-red-500/10 text-red-600 border-red-200";
+      case "Publish": return "bg-green-500/10 text-green-600 border-green-200";
       default: return "bg-muted";
     }
   };
@@ -232,13 +230,44 @@ export default function ContentManagement() {
             width={window.innerWidth}
             height={window.innerHeight}
             recycle={false}
-            numberOfPieces={500}
-            gravity={0.1}
-            initialVelocityY={20}
-            colors={['#8B5CF6', '#A855F7', '#C084FC', '#DDD6FE', '#EDE9FE']}
+            numberOfPieces={1000}
+            gravity={0.12}
+            initialVelocityY={25}
+            colors={['#10B981', '#059669', '#047857', '#065F46', '#064E3B']}
           />
         </div>
       )}
+
+      {/* Brainstorming Section */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-foreground mb-3">Brainstorming Ideas</h2>
+        <Card className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-200 dark:border-purple-800">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-card p-3 rounded-lg border border-border/30">
+                <h4 className="font-medium text-foreground mb-2">Summer Campaign Ideas</h4>
+                <p className="text-sm text-muted-foreground">Beach lifestyle, travel vlogs, summer fashion trends</p>
+              </div>
+              <div className="bg-card p-3 rounded-lg border border-border/30">
+                <h4 className="font-medium text-foreground mb-2">Tech Product Reviews</h4>
+                <p className="text-sm text-muted-foreground">Latest gadgets, unboxing videos, comparison content</p>
+              </div>
+              <div className="bg-card p-3 rounded-lg border border-border/30">
+                <h4 className="font-medium text-foreground mb-2">Fitness Challenges</h4>
+                <p className="text-sm text-muted-foreground">30-day challenges, workout routines, healthy recipes</p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              className="mt-4 border-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+              onClick={() => setShowNewContentDialog(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Brainstorming Idea
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -295,7 +324,7 @@ export default function ContentManagement() {
         {/* Board View with Drag & Drop */}
         <TabsContent value="board" className="mt-6">
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 overflow-x-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto">
               {statusOrder.map((status) => (
                 <div key={status} className="space-y-3 min-w-[280px] md:min-w-0">
                   <div className="flex items-center justify-between">
