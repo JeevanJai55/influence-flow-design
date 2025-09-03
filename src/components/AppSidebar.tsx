@@ -32,21 +32,9 @@ const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Brainstorming", url: "/brainstorming", icon: Lightbulb },
   { title: "Content Management", url: "/content", icon: FileText },
-  { title: "Influencers", url: "/influencers", icon: Users, comingSoon: true },
-  { title: "Campaigns", url: "/campaigns", icon: Target, comingSoon: true },
-  { title: "Analytics", url: "/analytics", icon: BarChart3, comingSoon: true },
-];
-
-const quickActions = [
-  { title: "Find Influencers", url: "/discover", icon: Search },
-  { title: "New Campaign", url: "/campaigns/new", icon: Plus },
-  { title: "Top Performers", url: "/top-performers", icon: Star },
+  { title: "Bio Link Builder", url: "/bio-link", icon: Users },
+  { title: "Top Posts", url: "/top-performers", icon: Star },
   { title: "Trending", url: "/trending", icon: TrendingUp },
-  { title: "Content Calendar", url: "/calendar", icon: Calendar },
-  { title: "Brand Assets", url: "/assets", icon: Target },
-  { title: "Reports", url: "/reports", icon: BarChart3 },
-  { title: "Templates", url: "/templates", icon: Users },
-  { title: "AI Playground", url: "/playground", icon: Plus },
 ];
 
 export function AppSidebar() {
@@ -101,45 +89,9 @@ export function AppSidebar() {
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    {item.comingSoon ? (
-                      <div className="w-full justify-start text-muted-foreground/50 cursor-not-allowed flex items-center">
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && (
-                          <>
-                            <span className="mr-auto">{item.title}</span>
-                            <span className="text-xs bg-muted/50 px-2 py-1 rounded">Soon</span>
-                          </>
-                        )}
-                      </div>
-                    ) : (
-                      <NavLink 
-                        to={item.url} 
-                        end={item.url === "/"}
-                        className={getNavCls}
-                      >
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Quick Actions */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
-            Quick Actions
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {quickActions.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
                     <NavLink 
                       to={item.url} 
+                      end={item.url === "/"}
                       className={getNavCls}
                     >
                       <item.icon className="h-4 w-4 flex-shrink-0" />
@@ -151,6 +103,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
 
         {/* Settings at bottom */}
         <div className="mt-auto">

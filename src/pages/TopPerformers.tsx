@@ -14,93 +14,93 @@ import {
 } from "lucide-react";
 
 export default function TopPerformers() {
-  const topInfluencers = [
+  const topPosts = [
     {
       id: 1,
-      name: "Sarah Johnson",
-      handle: "@sarahjstyle",
-      avatar: "SJ",
-      followers: "125K",
+      title: "Summer Fashion Trends 2024",
+      platform: "Instagram",
+      thumbnail: "👗",
+      likes: "125K",
+      comments: "2.3K",
+      shares: "890",
       engagement: "9.2%",
-      avgLikes: "11.5K",
-      avgComments: "420",
-      totalCampaigns: 8,
-      revenue: "$45K",
-      growth: "+15%",
+      reach: "1.2M",
+      date: "Aug 10",
+      creator: "@sarahjstyle",
       category: "Fashion",
-      verified: true
+      trending: true
     },
     {
       id: 2,
-      name: "Mike Chen",
-      handle: "@mikecfit",
-      avatar: "MC",
-      followers: "89K",
-      engagement: "8.7%",
-      avgLikes: "7.8K",
-      avgComments: "310",
-      totalCampaigns: 12,
-      revenue: "$38K",
-      growth: "+22%",
+      title: "10-Min Morning Workout",
+      platform: "TikTok", 
+      thumbnail: "💪",
+      likes: "89K",
+      comments: "1.8K",  
+      shares: "2.1K",
+      engagement: "12.7%",
+      reach: "850K",
+      date: "Aug 8",
+      creator: "@mikecfit",
       category: "Fitness",
-      verified: true
+      trending: true
     },
     {
       id: 3,
-      name: "Emma Davis",
-      handle: "@emmaeats",
-      avatar: "ED",
-      followers: "156K",
-      engagement: "7.9%",
-      avgLikes: "12.3K",
-      avgComments: "450",
-      totalCampaigns: 6,
-      revenue: "$52K",
-      growth: "+8%",
+      title: "Healthy Breakfast Ideas",
+      platform: "YouTube",
+      thumbnail: "🥗",
+      likes: "156K",
+      comments: "3.2K",
+      shares: "1.2K", 
+      engagement: "8.9%",
+      reach: "2.1M",
+      date: "Aug 6",
+      creator: "@emmaeats",
       category: "Food",
-      verified: false
+      trending: false
     },
     {
       id: 4,
-      name: "Alex Rivera",
-      handle: "@alextech",
-      avatar: "AR",
-      followers: "94K",
-      engagement: "10.1%",
-      avgLikes: "9.5K",
-      avgComments: "380",
-      totalCampaigns: 10,
-      revenue: "$41K",
-      growth: "+18%",
+      title: "Tech Review: AI Gadgets",
+      platform: "YouTube",
+      thumbnail: "📱",
+      likes: "94K",
+      comments: "2.8K",
+      shares: "1.5K",
+      engagement: "11.1%",
+      reach: "980K", 
+      date: "Aug 5",
+      creator: "@alextech",
       category: "Tech",
-      verified: true
+      trending: true
     }
   ];
 
   const metrics = [
     {
-      title: "Avg Engagement Rate",
-      value: "8.9%",
-      change: "+2.1%",
+      title: "Avg Engagement Rate", 
+      value: "10.5%",
+      change: "+2.8%",
       icon: Heart
     },
     {
-      title: "Total Revenue",
-      value: "$176K",
-      change: "+15.8%", 
+      title: "Total Reach",
+      value: "5.2M",
+      change: "+18.5%", 
       icon: TrendingUp
     },
     {
-      title: "Active Campaigns",
-      value: "36",
-      change: "+6",
+      title: "Trending Posts",
+      value: "3",
+      change: "+1",
       icon: Star
     },
     {
-      title: "Combined Reach",
+      title: "Total Interactions",
       value: "464K",
-      change: "+12.3%",
-      icon: Users
+      change: "+15.3%",
+      icon: MessageCircle
     }
   ];
 
@@ -109,9 +109,9 @@ export default function TopPerformers() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Top Performers</h1>
+          <h1 className="text-3xl font-bold text-foreground">Top Posts</h1>
           <p className="text-muted-foreground">
-            Your highest-performing influencers and their metrics
+            Your highest-performing content across all platforms
           </p>
         </div>
         <div className="flex space-x-3">
@@ -147,65 +147,49 @@ export default function TopPerformers() {
         ))}
       </div>
 
-      {/* Top Performers List */}
+      {/* Top Posts List */}
       <Card className="transition-smooth hover:shadow-elegant border-border/50">
         <CardHeader>
-          <CardTitle className="text-foreground">Performance Leaderboard</CardTitle>
+          <CardTitle className="text-foreground">Top Performing Posts</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {topInfluencers.map((influencer, index) => (
-            <div key={influencer.id} className="p-6 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors">
-              <div className="flex items-center justify-between">
-                {/* Influencer Info */}
-                <div className="flex items-center space-x-4">
+          {topPosts.map((post, index) => (
+            <div key={post.id} className="p-6 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors">
+              <div className="flex items-start justify-between">
+                {/* Post Info */}
+                <div className="flex items-start space-x-4">
                   <div className="flex items-center space-x-2">
                     <span className="text-2xl font-bold text-primary">#{index + 1}</span>
-                    <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center">
-                      <span className="text-primary-foreground font-medium">
-                        {influencer.avatar}
+                    <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+                      <span className="text-2xl">
+                        {post.thumbnail}
                       </span>
                     </div>
                   </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <h4 className="font-semibold text-foreground">{influencer.name}</h4>
-                      {influencer.verified && (
-                        <Star className="h-4 w-4 text-golden fill-current" />
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h4 className="font-semibold text-foreground">{post.title}</h4>
+                      {post.trending && (
+                        <Badge variant="default" className="text-xs bg-red-500">
+                          🔥 Trending
+                        </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{influencer.handle}</p>
-                    <Badge variant="secondary" className="mt-1 text-xs">{influencer.category}</Badge>
-                  </div>
-                </div>
-
-                {/* Metrics */}
-                <div className="flex items-center space-x-8">
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Followers</p>
-                    <p className="font-semibold text-foreground">{influencer.followers}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Engagement</p>
-                    <p className="font-semibold text-green-500">{influencer.engagement}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Campaigns</p>
-                    <p className="font-semibold text-foreground">{influencer.totalCampaigns}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Revenue</p>
-                    <p className="font-semibold text-foreground">{influencer.revenue}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Growth</p>
-                    <p className="font-semibold text-green-500">{influencer.growth}</p>
+                    <div className="flex items-center space-x-3 text-sm text-muted-foreground mb-2">
+                      <span>{post.creator}</span>
+                      <span>•</span>
+                      <span>{post.platform}</span>
+                      <span>•</span>
+                      <span>{post.date}</span>
+                    </div>
+                    <Badge variant="secondary" className="text-xs">{post.category}</Badge>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center space-x-2">
                   <Button variant="outline" size="sm">
-                    View Profile
+                    View Post
                   </Button>
                   <Button variant="ghost" size="icon">
                     <ExternalLink className="h-4 w-4" />
@@ -213,26 +197,35 @@ export default function TopPerformers() {
                 </div>
               </div>
 
-              {/* Additional Stats */}
+              {/* Metrics */}
               <div className="mt-4 pt-4 border-t border-border/30">
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-1">
-                      <Heart className="h-3 w-3" />
-                      <span>{influencer.avgLikes} avg likes</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <MessageCircle className="h-3 w-3" />
-                      <span>{influencer.avgComments} avg comments</span>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Likes</p>
+                    <p className="font-semibold text-foreground">{post.likes}</p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" className="text-xs">
-                      Send Message
-                    </Button>
-                    <Button variant="ghost" size="sm" className="text-xs">
-                      Add to Campaign
-                    </Button>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Comments</p>
+                    <p className="font-semibold text-foreground">{post.comments}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Shares</p>
+                    <p className="font-semibold text-foreground">{post.shares}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Engagement</p>
+                    <p className="font-semibold text-green-500">{post.engagement}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Reach</p>
+                    <p className="font-semibold text-foreground">{post.reach}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center space-x-1">
+                      <Heart className="h-3 w-3 text-red-500" />
+                      <MessageCircle className="h-3 w-3 text-blue-500" />
+                      <Share2 className="h-3 w-3 text-green-500" />
+                    </div>
                   </div>
                 </div>
               </div>

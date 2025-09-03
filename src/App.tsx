@@ -11,7 +11,8 @@ import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ContentManagement from "./pages/ContentManagement";
-import Brainstorming from "./pages/Brainstorming";
+import BrainstormingFlow from "./pages/BrainstormingFlow";
+import BioLinkBuilder from "./pages/BioLinkBuilder";
 import NewCampaign from "./pages/NewCampaign";
 import TopPerformers from "./pages/TopPerformers";
 import Trending from "./pages/Trending";
@@ -48,7 +49,12 @@ const App = () => (
               } />
               <Route path="/brainstorming" element={
                 <ProtectedRoute>
-                  <Brainstorming />
+                  <BrainstormingFlow />
+                </ProtectedRoute>
+              } />
+              <Route path="/bio-link" element={
+                <ProtectedRoute>
+                  <BioLinkBuilder />
                 </ProtectedRoute>
               } />
               <Route path="/content" element={
