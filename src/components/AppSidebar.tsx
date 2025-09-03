@@ -11,7 +11,10 @@ import {
   Star,
   TrendingUp,
   Lightbulb,
-  FileText
+  FileText,
+  Link,
+  FolderOpen,
+  Bot
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -30,11 +33,13 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Content", url: "/content", icon: FileText },
   { title: "Brainstorming", url: "/brainstorming", icon: Lightbulb },
-  { title: "Content Management", url: "/content", icon: FileText },
-  { title: "Bio Link Builder", url: "/bio-link", icon: Users },
-  { title: "Top Posts", url: "/top-performers", icon: Star },
-  { title: "Trending", url: "/trending", icon: TrendingUp },
+  { title: "Bio Link", url: "/bio-link", icon: Link },
+  { title: "Calendar", url: "/calendar", icon: Calendar },
+  { title: "Assets", url: "/assets", icon: FolderOpen },
+  { title: "AI Playground", url: "/playground", icon: Bot },
+  { title: "Top Performers", url: "/top-performers", icon: TrendingUp },
 ];
 
 export function AppSidebar() {

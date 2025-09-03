@@ -1,301 +1,439 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { 
-  Upload,
-  Download,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
-  Image,
-  Video,
-  FileText,
-  Palette,
-  Plus,
+  Upload, 
+  Image, 
+  Video, 
+  FileText, 
+  Download, 
+  Search, 
+  Filter, 
+  Grid3X3, 
+  List, 
   Star,
   Eye,
-  MoreHorizontal
+  Trash2,
+  Edit3,
+  FolderPlus,
+  Palette,
+  Type,
+  Music,
+  Camera
 } from "lucide-react";
 
+interface Asset {
+  id: string;
+  name: string;
+  type: 'image' | 'video' | 'logo' | 'template' | 'audio' | 'document';
+  size: string;
+  format: string;
+  category: string;
+  uploadDate: Date;
+  tags: string[];
+  isFavorite: boolean;
+  thumbnail: string;
+}
+
 export default function BrandAssets() {
-  const assetCategories = [
-    { name: "All", count: 127, active: true },
-    { name: "Logos", count: 23, active: false },
-    { name: "Images", count: 45, active: false },
-    { name: "Videos", count: 18, active: false },
-    { name: "Templates", count: 31, active: false },
-    { name: "Guidelines", count: 10, active: false }
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // Mock assets data
+  const assets: Asset[] = [
+    {
+      id: '1',
+      name: 'Brand Logo Primary',
+      type: 'logo',
+      size: '2.3 MB',
+      format: 'PNG',
+      category: 'branding',
+      uploadDate: new Date(2024, 2, 10),
+      tags: ['logo', 'primary', 'brand'],
+      isFavorite: true,
+      thumbnail: '/api/placeholder/200/200'
+    },
+    {
+      id: '2',
+      name: 'Product Hero Video',
+      type: 'video',
+      size: '45.8 MB',
+      format: 'MP4',
+      category: 'content',
+      uploadDate: new Date(2024, 2, 12),
+      tags: ['hero', 'product', 'video'],
+      isFavorite: false,
+      thumbnail: '/api/placeholder/200/200'
+    },
+    {
+      id: '3',
+      name: 'Social Media Template',
+      type: 'template',
+      size: '1.2 MB',
+      format: 'PSD',
+      category: 'templates',
+      uploadDate: new Date(2024, 2, 14),
+      tags: ['template', 'social', 'instagram'],
+      isFavorite: true,
+      thumbnail: '/api/placeholder/200/200'
+    },
+    {
+      id: '4',
+      name: 'Brand Colors Palette',
+      type: 'document',
+      size: '856 KB',
+      format: 'PDF',
+      category: 'guidelines',
+      uploadDate: new Date(2024, 2, 8),
+      tags: ['colors', 'palette', 'brand'],
+      isFavorite: false,
+      thumbnail: '/api/placeholder/200/200'
+    },
+    {
+      id: '5',
+      name: 'Campaign Background Music',
+      type: 'audio',
+      size: '8.4 MB',
+      format: 'MP3',
+      category: 'audio',
+      uploadDate: new Date(2024, 2, 16),
+      tags: ['music', 'background', 'campaign'],
+      isFavorite: false,
+      thumbnail: '/api/placeholder/200/200'
+    },
+    {
+      id: '6',
+      name: 'Product Photography Set',
+      type: 'image',
+      size: '12.7 MB',
+      format: 'JPG',
+      category: 'photography',
+      uploadDate: new Date(2024, 2, 18),
+      tags: ['product', 'photography', 'high-res'],
+      isFavorite: true,
+      thumbnail: '/api/placeholder/200/200'
+    }
   ];
 
-  const brandAssets = [
-    {
-      id: 1,
-      name: "Primary Logo - Dark",
-      type: "logo",
-      format: "SVG",
-      size: "2.4 MB",
-      category: "Logos",
-      downloads: 145,
-      lastModified: "2 days ago",
-      thumbnail: "🎨"
-    },
-    {
-      id: 2,
-      name: "Hero Banner Template",
-      type: "template",
-      format: "PSD",
-      size: "15.7 MB",
-      category: "Templates",
-      downloads: 89,
-      lastModified: "1 week ago",
-      thumbnail: "📐"
-    },
-    {
-      id: 3,
-      name: "Product Photography Set",
-      type: "image",
-      format: "JPG",
-      size: "25.3 MB",
-      category: "Images",
-      downloads: 234,
-      lastModified: "3 days ago",
-      thumbnail: "📸"
-    },
-    {
-      id: 4,
-      name: "Brand Guidelines 2024",
-      type: "document",
-      format: "PDF",
-      size: "8.9 MB",
-      category: "Guidelines",
-      downloads: 567,
-      lastModified: "1 month ago",
-      thumbnail: "📋"
-    },
-    {
-      id: 5,
-      name: "Social Media Video Template",
-      type: "video",
-      format: "MP4",
-      size: "45.2 MB",
-      category: "Videos",
-      downloads: 76,
-      lastModified: "5 days ago",
-      thumbnail: "🎬"
-    },
-    {
-      id: 6,
-      name: "Color Palette Swatches",
-      type: "design",
-      format: "ASE",
-      size: "1.2 MB",
-      category: "Guidelines",
-      downloads: 298,
-      lastModified: "1 week ago",
-      thumbnail: "🎨"
-    }
+  const categories = [
+    { id: 'all', name: 'All Assets', count: assets.length },
+    { id: 'branding', name: 'Branding', count: assets.filter(a => a.category === 'branding').length },
+    { id: 'content', name: 'Content', count: assets.filter(a => a.category === 'content').length },
+    { id: 'templates', name: 'Templates', count: assets.filter(a => a.category === 'templates').length },
+    { id: 'guidelines', name: 'Guidelines', count: assets.filter(a => a.category === 'guidelines').length },
+    { id: 'photography', name: 'Photography', count: assets.filter(a => a.category === 'photography').length },
+    { id: 'audio', name: 'Audio', count: assets.filter(a => a.category === 'audio').length }
   ];
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "logo": return Palette;
-      case "image": return Image;
-      case "video": return Video;
-      case "template": return Grid3X3;
-      case "document": return FileText;
-      case "design": return Palette;
+      case 'image': return Image;
+      case 'video': return Video;
+      case 'logo': return Palette;
+      case 'template': return FileText;
+      case 'audio': return Music;
+      case 'document': return FileText;
       default: return FileText;
     }
   };
 
-  const getFormatColor = (format: string) => {
-    switch (format) {
-      case "SVG": return "bg-green-500/10 text-green-600";
-      case "JPG": return "bg-blue-500/10 text-blue-600";
-      case "PNG": return "bg-purple-500/10 text-purple-600";
-      case "PDF": return "bg-red-500/10 text-red-600";
-      case "PSD": return "bg-indigo-500/10 text-indigo-600";
-      case "MP4": return "bg-orange-500/10 text-orange-600";
-      case "ASE": return "bg-pink-500/10 text-pink-600";
-      default: return "bg-gray-500/10 text-gray-600";
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'image': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      case 'video': return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+      case 'logo': return 'bg-pink-500/10 text-pink-500 border-pink-500/20';
+      case 'template': return 'bg-green-500/10 text-green-500 border-green-500/20';
+      case 'audio': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
+      case 'document': return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
+  const filteredAssets = assets.filter(asset => {
+    const matchesSearch = asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         asset.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = selectedCategory === 'all' || asset.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-background p-6 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Brand Assets</h1>
-          <p className="text-muted-foreground">
-            Manage and organize your brand resources for influencer campaigns
+          <h1 className="text-4xl font-bold mb-2">Brand Assets</h1>
+          <p className="text-xl text-muted-foreground">
+            Centralized storage for all your brand assets and media files
           </p>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline" className="transition-smooth">
-            <Download className="h-4 w-4 mr-2" />
-            Bulk Download
+        
+        <div className="flex items-center gap-4">
+          <Button variant="outline">
+            <FolderPlus className="h-4 w-4 mr-2" />
+            New Folder
           </Button>
-          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
+          <Button>
             <Upload className="h-4 w-4 mr-2" />
             Upload Assets
           </Button>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search assets..." 
-              className="pl-10 w-80"
-            />
-          </div>
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon">
-            <Grid3X3 className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon">
-            <List className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-4">
-        {/* Categories Sidebar */}
+      <div className="grid lg:grid-cols-4 gap-8">
+        {/* Sidebar */}
         <div className="space-y-6">
-          <Card className="transition-smooth hover:shadow-elegant border-border/50">
+          {/* Search and Filters */}
+          <Card className="animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-foreground">Categories</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {assetCategories.map((category, index) => (
-                <div 
-                  key={index}
-                  className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
-                    category.active 
-                      ? 'bg-primary/10 text-primary border border-primary/20' 
-                      : 'hover:bg-muted/50'
-                  }`}
-                >
-                  <span className="font-medium">{category.name}</span>
-                  <Badge variant="secondary" className="text-xs">{category.count}</Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card className="transition-smooth hover:shadow-elegant border-border/50">
-            <CardHeader>
-              <CardTitle className="text-foreground">Usage Stats</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="h-5 w-5" />
+                Search & Filter
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-4 rounded-lg bg-muted/30 border border-border/30">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Downloads</p>
-                    <p className="text-2xl font-bold text-foreground">1,409</p>
-                  </div>
-                  <Download className="h-8 w-8 text-primary" />
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search assets..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Categories</label>
+                {categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={selectedCategory === category.id ? "default" : "ghost"}
+                    size="sm"
+                    className="w-full justify-between"
+                    onClick={() => setSelectedCategory(category.id)}
+                  >
+                    <span>{category.name}</span>
+                    <Badge variant="secondary" className="text-xs">
+                      {category.count}
+                    </Badge>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Storage Info */}
+          <Card className="animate-fade-in" style={{animationDelay: '0.1s'}}>
+            <CardHeader>
+              <CardTitle>Storage</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Used</span>
+                  <span>2.8 GB of 10 GB</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: '28%' }}></div>
                 </div>
               </div>
-              <div className="p-4 rounded-lg bg-muted/30 border border-border/30">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Storage Used</p>
-                    <p className="text-2xl font-bold text-foreground">2.4 GB</p>
-                  </div>
-                  <Upload className="h-8 w-8 text-primary" />
+              
+              <Button variant="outline" size="sm" className="w-full">
+                Upgrade Storage
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card className="animate-fade-in" style={{animationDelay: '0.2s'}}>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="text-sm space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Logo uploaded</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Template shared</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>Video processed</span>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Assets Grid */}
-        <div className="lg:col-span-3">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {brandAssets.map((asset) => {
-              const TypeIcon = getTypeIcon(asset.type);
-              return (
-                <Card key={asset.id} className="transition-smooth hover:shadow-elegant border-border/50 cursor-pointer group">
-                  <CardContent className="p-4">
-                    {/* Thumbnail */}
-                    <div className="aspect-square bg-muted/30 rounded-lg flex items-center justify-center mb-4 group-hover:bg-muted/50 transition-colors">
-                      <span className="text-4xl">{asset.thumbnail}</span>
-                    </div>
-
-                    {/* Asset Info */}
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between">
-                        <h4 className="font-semibold text-foreground text-sm leading-tight">{asset.name}</h4>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <MoreHorizontal className="h-3 w-3" />
-                        </Button>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <TypeIcon className="h-3 w-3 text-muted-foreground" />
-                        <Badge className={`text-xs ${getFormatColor(asset.format)}`}>
-                          {asset.format}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">{asset.size}</span>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <div className="flex items-center space-x-1">
-                          <Eye className="h-3 w-3" />
-                          <span>{asset.downloads} downloads</span>
-                        </div>
-                        <span>{asset.lastModified}</span>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center space-x-2 pt-2">
-                        <Button size="sm" variant="outline" className="flex-1 text-xs">
-                          <Download className="h-3 w-3 mr-1" />
-                          Download
-                        </Button>
-                        <Button size="sm" variant="ghost" className="px-2">
-                          <Star className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Upload Zone */}
-          <Card className="mt-6 transition-smooth hover:shadow-elegant border-border/50 border-dashed">
-            <CardContent className="p-8">
-              <div className="text-center">
-                <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Upload New Assets</h3>
-                <p className="text-muted-foreground mb-4">
-                  Drag and drop files here, or click to browse
-                </p>
-                <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Choose Files
-                </Button>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Supports: JPG, PNG, SVG, PDF, PSD, MP4 (Max 100MB)
-                </p>
+        {/* Main Content */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Toolbar */}
+          <Card className="animate-fade-in">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">
+                    {filteredAssets.length} assets
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center border rounded-lg p-1">
+                    <Button
+                      variant={view === 'grid' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setView('grid')}
+                    >
+                      <Grid3X3 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={view === 'list' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setView('list')}
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <Button variant="outline" size="sm">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filter
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Assets Grid/List */}
+          {view === 'grid' ? (
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredAssets.map((asset, index) => {
+                const TypeIcon = getTypeIcon(asset.type);
+                return (
+                  <Card key={asset.id} className="group hover:shadow-lg transition-all duration-300 hover-scale animate-fade-in" style={{animationDelay: `${index * 0.1}s`}}>
+                    <CardContent className="p-4">
+                      <div className="relative mb-4">
+                        <div className="aspect-square bg-muted/50 rounded-lg flex items-center justify-center">
+                          {asset.type === 'image' || asset.type === 'video' ? (
+                            <div className="w-full h-full bg-gradient-primary rounded-lg flex items-center justify-center">
+                              <TypeIcon className="h-12 w-12 text-primary-foreground" />
+                            </div>
+                          ) : (
+                            <TypeIcon className="h-12 w-12 text-muted-foreground" />
+                          )}
+                        </div>
+                        
+                        <div className="absolute top-2 right-2 flex items-center gap-1">
+                          {asset.isFavorite && (
+                            <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                              <Star className="h-3 w-3 text-white fill-current" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                          <Button size="sm" variant="secondary">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="secondary">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="secondary">
+                            <Edit3 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <h3 className="font-semibold truncate">{asset.name}</h3>
+                        
+                        <div className="flex items-center gap-2">
+                          <Badge className={getTypeColor(asset.type)}>
+                            {asset.type}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {asset.format}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>{asset.size}</span>
+                          <span>{asset.uploadDate.toLocaleDateString()}</span>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-1">
+                          {asset.tags.slice(0, 2).map((tag) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              #{tag}
+                            </Badge>
+                          ))}
+                          {asset.tags.length > 2 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{asset.tags.length - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredAssets.map((asset, index) => {
+                const TypeIcon = getTypeIcon(asset.type);
+                return (
+                  <Card key={asset.id} className="hover:shadow-lg transition-all duration-300 hover-scale animate-fade-in" style={{animationDelay: `${index * 0.05}s`}}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+                            <TypeIcon className="h-6 w-6 text-primary-foreground" />
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold truncate">{asset.name}</h3>
+                              {asset.isFavorite && (
+                                <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                              )}
+                            </div>
+                            
+                            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                              <Badge className={getTypeColor(asset.type)}>
+                                {asset.type}
+                              </Badge>
+                              <span>{asset.format}</span>
+                              <span>{asset.size}</span>
+                              <span>{asset.uploadDate.toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Edit3 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

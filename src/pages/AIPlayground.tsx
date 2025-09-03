@@ -1,121 +1,158 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Bot,
-  Sparkles,
-  Send,
-  Settings,
-  MessageSquare,
-  Lightbulb,
-  Target,
+  Bot, 
+  Zap, 
+  Brain, 
+  MessageSquare, 
+  Send, 
+  Clock, 
   TrendingUp,
   Users,
-  Zap
+  Calendar,
+  Target,
+  Sparkles,
+  Code,
+  Workflow,
+  Settings
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface Message {
+  content: string;
+  role: 'user' | 'assistant';
+  timestamp: Date;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+}
 
 export default function AIPlayground() {
-  const [prompt, setPrompt] = useState("");
-  const [responses, setResponses] = useState<Array<{id: string, prompt: string, response: string, timestamp: Date}>>([]);
+  const [currentPrompt, setCurrentPrompt] = useState('');
+  const [responses, setResponses] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState("content-creator");
+  const [selectedAgent, setSelectedAgent] = useState('content-optimizer');
 
-  const agents = [
+  const agents: Agent[] = [
     {
-      id: "content-creator",
-      name: "Content Creator",
-      description: "Generates creative content ideas and copy",
-      icon: Lightbulb,
-      color: "text-yellow-500"
-    },
-    {
-      id: "campaign-strategist",
-      name: "Campaign Strategist",
-      description: "Plans and optimizes marketing campaigns",
-      icon: Target,
-      color: "text-blue-500"
-    },
-    {
-      id: "trend-analyzer",
-      name: "Trend Analyzer",
-      description: "Analyzes market trends and opportunities",
+      id: 'content-optimizer',
+      name: 'Content Optimizer',
+      description: 'Analyzes and optimizes content for maximum engagement',
       icon: TrendingUp,
-      color: "text-green-500"
+      color: 'text-blue-500'
     },
     {
-      id: "audience-insights",
-      name: "Audience Expert",
-      description: "Provides audience behavior insights",
+      id: 'workflow-automator',
+      name: 'Workflow Automator',
+      description: 'Creates automated workflows for campaign management',
+      icon: Workflow,
+      color: 'text-purple-500'
+    },
+    {
+      id: 'audience-analyzer',
+      name: 'Audience Analyzer',
+      description: 'Provides insights on audience behavior and preferences',
       icon: Users,
-      color: "text-purple-500"
+      color: 'text-green-500'
+    },
+    {
+      id: 'campaign-strategist',
+      name: 'Campaign Strategist',
+      description: 'Develops strategic campaign plans and recommendations',
+      icon: Target,
+      color: 'text-orange-500'
+    },
+    {
+      id: 'trend-predictor',
+      name: 'Trend Predictor',
+      description: 'Predicts upcoming trends and viral content opportunities',
+      icon: Sparkles,
+      color: 'text-pink-500'
+    },
+    {
+      id: 'code-generator',
+      name: 'Code Generator',
+      description: 'Generates custom automation scripts and integrations',
+      icon: Code,
+      color: 'text-cyan-500'
     }
   ];
 
-  const currentAgent = agents.find(agent => agent.id === selectedAgent);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
+    if (!currentPrompt.trim()) return;
 
+    const userMessage: Message = {
+      content: currentPrompt,
+      role: 'user',
+      timestamp: new Date()
+    };
+
+    setResponses(prev => [...prev, userMessage]);
     setIsLoading(true);
-    
-    // Simulate AI response (replace with actual AI integration)
+
+    // Simulate AI response
     setTimeout(() => {
-      const mockResponse = `This is a simulated response from the ${currentAgent?.name} agent for: "${prompt}". In a real implementation, this would connect to an AI service like OpenAI, Anthropic, or similar.`;
-      
-      setResponses(prev => [{
-        id: Date.now().toString(),
-        prompt,
-        response: mockResponse,
+      const selectedAgentData = agents.find(a => a.id === selectedAgent);
+      const assistantMessage: Message = {
+        content: `As ${selectedAgentData?.name}, I've analyzed your request: "${currentPrompt}". Here's my recommendation:\n\n• Optimize posting schedule for peak engagement\n• Use trending hashtags: #contentcreator #viral\n• Consider video format for 3x better performance\n• Target audience: 18-34 age group shows highest engagement\n\nWould you like me to create an automated workflow for this strategy?`,
+        role: 'assistant',
         timestamp: new Date()
-      }, ...prev]);
+      };
       
-      setPrompt("");
+      setResponses(prev => [...prev, assistantMessage]);
       setIsLoading(false);
     }, 2000);
+
+    setCurrentPrompt('');
   };
 
   const presetPrompts = [
-    "Generate 5 Instagram post ideas for a fitness influencer",
-    "Create a campaign strategy for a beauty brand launch",
-    "Analyze current fashion trends for summer 2024",
-    "Suggest audience targeting for a tech product"
+    "Create a content strategy for Q1 2024",
+    "Analyze my top performing posts",
+    "Generate hashtag recommendations",
+    "Automate campaign approval workflow",
+    "Predict viral content trends"
   ];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="min-h-screen bg-background p-6 space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center">
-            <Bot className="h-6 w-6 md:h-8 md:w-8 text-primary mr-2 md:mr-3" />
+      <div className="text-center space-y-4 animate-fade-in">
+        <div className="flex items-center justify-center gap-3">
+          <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+            <Brain className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             AI Playground
           </h1>
-          <p className="text-muted-foreground text-sm md:text-base">
-            Collaborate with AI agents to enhance your influencer marketing workflow
-          </p>
         </div>
-        <Button variant="outline" className="text-sm md:text-base">
-          <Settings className="h-4 w-4 mr-2" />
-          Configure Agents
-        </Button>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Harness the power of AI for automation, workflow optimization, and strategic insights
+        </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-4 gap-8">
         {/* Main Chat Interface */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-3 space-y-6">
           {/* Agent Selection */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center">
-                <Zap className="h-5 w-5 mr-2 text-primary" />
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bot className="h-5 w-5" />
                 Select AI Agent
               </CardTitle>
+              <CardDescription>
+                Choose the specialized AI agent for your task
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={selectedAgent} onValueChange={setSelectedAgent}>
@@ -125,7 +162,7 @@ export default function AIPlayground() {
                 <SelectContent>
                   {agents.map((agent) => (
                     <SelectItem key={agent.id} value={agent.id}>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <agent.icon className={`h-4 w-4 ${agent.color}`} />
                         <span>{agent.name}</span>
                       </div>
@@ -133,74 +170,71 @@ export default function AIPlayground() {
                   ))}
                 </SelectContent>
               </Select>
-              {currentAgent && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  {currentAgent.description}
-                </p>
-              )}
             </CardContent>
           </Card>
 
           {/* Chat Interface */}
-          <Card className="flex-1">
+          <Card className="animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center">
-                <MessageSquare className="h-5 w-5 mr-2" />
-                Chat with {currentAgent?.name}
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                AI Conversation
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Chat Messages */}
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {responses.map((response) => (
-                  <div key={response.id} className="space-y-3">
-                    <div className="bg-primary/10 p-3 rounded-lg">
-                      <p className="text-sm text-foreground">{response.prompt}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {response.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
-                    <div className="bg-muted/30 p-3 rounded-lg">
-                      <p className="text-sm text-foreground">{response.response}</p>
-                    </div>
+              {/* Chat History */}
+              <div className="h-96 overflow-y-auto space-y-4 border rounded-lg p-4 bg-muted/20">
+                {responses.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-12">
+                    <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Start a conversation with your AI agent</p>
                   </div>
-                ))}
-                {responses.length === 0 && (
-                  <div className="text-center py-8">
-                    <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground">Start a conversation with your AI agent</p>
+                ) : (
+                  responses.map((message, index) => (
+                    <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] rounded-lg p-4 ${
+                        message.role === 'user' 
+                          ? 'bg-primary text-primary-foreground ml-auto' 
+                          : 'bg-card border'
+                      }`}>
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                        <div className="text-xs opacity-70 mt-2">
+                          {message.timestamp.toLocaleTimeString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+                
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-card border rounded-lg p-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                        <span className="text-muted-foreground ml-2">AI is thinking...</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Input Form */}
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <Textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Ask your AI agent anything about influencer marketing..."
-                  className="min-h-[100px] resize-none"
+                  value={currentPrompt}
+                  onChange={(e) => setCurrentPrompt(e.target.value)}
+                  placeholder="Ask your AI agent anything about content optimization, workflow automation, or strategic insights..."
+                  className="min-h-[100px]"
                 />
                 <div className="flex justify-between items-center">
-                  <p className="text-xs text-muted-foreground">
-                    {prompt.length}/500 characters
-                  </p>
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading || !prompt.trim()}
-                    className="bg-gradient-primary hover:shadow-glow"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Sparkles className="h-4 w-4 mr-2 animate-spin" />
-                        Thinking...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Send
-                      </>
-                    )}
+                  <div className="text-sm text-muted-foreground">
+                    Press Ctrl+Enter to send
+                  </div>
+                  <Button type="submit" disabled={isLoading || !currentPrompt.trim()}>
+                    <Send className="h-4 w-4 mr-2" />
+                    Send Message
                   </Button>
                 </div>
               </form>
@@ -209,69 +243,82 @@ export default function AIPlayground() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Available Agents */}
-          <Card>
+          <Card className="animate-fade-in" style={{animationDelay: '0.1s'}}>
             <CardHeader>
-              <CardTitle className="text-lg">Available Agents</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5" />
+                AI Agents
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {agents.map((agent) => (
-                <div 
+                <div
                   key={agent.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                    selectedAgent === agent.id 
-                      ? 'bg-primary/10 border-primary/50' 
-                      : 'bg-muted/30 border-border/30 hover:bg-muted/50'
+                  className={`p-3 border rounded-lg cursor-pointer transition-all hover:border-primary/50 ${
+                    selectedAgent === agent.id ? 'border-primary bg-primary/5' : ''
                   }`}
                   onClick={() => setSelectedAgent(agent.id)}
                 >
-                  <div className="flex items-center space-x-2 mb-1">
-                    <agent.icon className={`h-4 w-4 ${agent.color}`} />
-                    <h4 className="font-medium text-sm text-foreground">{agent.name}</h4>
+                  <div className="flex items-start gap-3">
+                    <agent.icon className={`h-5 w-5 ${agent.color} flex-shrink-0 mt-0.5`} />
+                    <div>
+                      <div className="font-medium text-sm">{agent.name}</div>
+                      <div className="text-xs text-muted-foreground">{agent.description}</div>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">{agent.description}</p>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* Preset Prompts */}
-          <Card>
+          {/* Quick Prompts */}
+          <Card className="animate-fade-in" style={{animationDelay: '0.2s'}}>
             <CardHeader>
-              <CardTitle className="text-lg">Quick Prompts</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                Quick Prompts
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {presetPrompts.map((presetPrompt, index) => (
+              {presetPrompts.map((prompt, index) => (
                 <Button
                   key={index}
-                  variant="ghost"
-                  className="w-full text-left justify-start text-wrap h-auto p-3"
-                  onClick={() => setPrompt(presetPrompt)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-left h-auto p-3"
+                  onClick={() => setCurrentPrompt(prompt)}
                 >
-                  <span className="text-xs">{presetPrompt}</span>
+                  <div className="text-xs">{prompt}</div>
                 </Button>
               ))}
             </CardContent>
           </Card>
 
           {/* Usage Stats */}
-          <Card>
+          <Card className="animate-fade-in" style={{animationDelay: '0.3s'}}>
             <CardHeader>
-              <CardTitle className="text-lg">Usage Today</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Usage Stats
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Queries</span>
-                <Badge variant="secondary">{responses.length}/50</Badge>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">API Calls Today</span>
+                  <Badge variant="secondary">47/1000</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Response Time</span>
+                  <Badge variant="secondary">1.2s avg</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Success Rate</span>
+                  <Badge variant="secondary">98.5%</Badge>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Tokens Used</span>
-                <Badge variant="secondary">1.2K/10K</Badge>
-              </div>
-              <Button variant="outline" size="sm" className="w-full">
-                Upgrade Plan
-              </Button>
             </CardContent>
           </Card>
         </div>
