@@ -38,8 +38,8 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      const success = await login(loginData.email, loginData.password);
-      if (success) {
+      const { error } = await login(loginData.email, loginData.password);
+      if (!error) {
         toast({
           title: "Welcome back!",
           description: "You've been successfully logged in.",
@@ -47,7 +47,7 @@ export default function Auth() {
       } else {
         toast({
           title: "Login failed",
-          description: "Invalid email or password. Please try again.",
+          description: error,
           variant: "destructive",
         });
       }
@@ -67,16 +67,16 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      const success = await signup(signupData.name, signupData.email, signupData.password);
-      if (success) {
+      const { error } = await signup(signupData.name, signupData.email, signupData.password);
+      if (!error) {
         toast({
           title: "Account created!",
-          description: "Welcome to OneInfluence!",
+          description: "Welcome to OneInfluence! Please check your email to confirm your account.",
         });
       } else {
         toast({
           title: "Signup failed",
-          description: "Please check your information and try again.",
+          description: error,
           variant: "destructive",
         });
       }

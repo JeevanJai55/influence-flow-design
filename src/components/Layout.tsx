@@ -65,9 +65,9 @@ export default function Layout({ children }: LayoutProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem disabled className="text-center">
-                      {user?.name || user?.email}
-                    </DropdownMenuItem>
+                     <DropdownMenuItem disabled className="text-center">
+                       {user?.user_metadata?.full_name || user?.email}
+                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={logout} className="text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
                       Logout

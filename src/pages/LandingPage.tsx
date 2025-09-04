@@ -85,14 +85,14 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Complete project management platform for influencer campaigns. 
-              Track projects, manage deadlines, collaborate with teams, and deliver results that matter.
+              The complete content management platform for social media creators and brands. 
+              Plan campaigns, create content, schedule posts, and track performance - all in one place.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
               <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-primary hover:opacity-90 transition-all duration-300 shadow-elegant hover-scale">
                 <Link to="/auth">
-                  Start Managing Projects <ArrowRight className="ml-2 h-5 w-5" />
+                  Start Creating Content <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               
@@ -102,28 +102,48 @@ export default function LandingPage() {
             </div>
             
             {/* Trust indicators */}
-            <div className="pt-12 flex flex-col items-center space-y-4">
-              <p className="text-sm text-muted-foreground">Trusted by 500+ marketing teams worldwide</p>
-              <div className="flex items-center space-x-8 opacity-60">
-                <div className="text-2xl font-bold">TechCorp</div>
-                <div className="text-2xl font-bold">StartupX</div>
-                <div className="text-2xl font-bold">BrandY</div>
-                <div className="text-2xl font-bold">AgencyZ</div>
+            <div className="pt-12 flex flex-col items-center space-y-6">
+              <p className="text-sm text-muted-foreground">Trusted by creators and brands worldwide</p>
+              <div className="flex items-center justify-center flex-wrap gap-8 opacity-60">
+                <div className="text-lg font-semibold">@InfluencerX</div>
+                <div className="text-lg font-semibold">CreativeStudio</div>
+                <div className="text-lg font-semibold">BrandFlow</div>
+                <div className="text-lg font-semibold">ContentHouse</div>
+              </div>
+              
+              {/* Real metrics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary">10K+</div>
+                  <div className="text-sm text-muted-foreground">Content Pieces</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary">500+</div>
+                  <div className="text-sm text-muted-foreground">Active Users</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary">98%</div>
+                  <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary">24/7</div>
+                  <div className="text-sm text-muted-foreground">Support</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Project Management Dashboard Preview */}
+      {/* Content Management Dashboard Preview */}
       <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Project Management Built for Influencer Marketing
+              Content Management Made Simple
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              See how teams manage complex influencer campaigns with visual project boards, automated workflows, and real-time collaboration.
+              Transform your content creation workflow with visual boards, AI-powered brainstorming, and automated scheduling.
             </p>
           </div>
 
@@ -244,10 +264,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Complete Project Management Suite
+              Complete Content Management Suite
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to manage influencer campaigns from planning to execution
+              Everything you need to create, manage, and optimize your content strategy
             </p>
           </div>
 
@@ -255,38 +275,38 @@ export default function LandingPage() {
             {[
               {
                 icon: Target,
-                title: "Campaign Planning",
-                description: "Visual project boards with drag-and-drop task management, timeline tracking, and milestone planning.",
+                title: "Content Planning",
+                description: "Visual content boards with drag-and-drop organization, content calendar integration, and workflow management.",
                 color: "text-blue-500"
               },
               {
-                icon: Users,
-                title: "Team Collaboration",
-                description: "Real-time messaging, file sharing, comment threads, and approval workflows for seamless teamwork.",
+                icon: Brain,
+                title: "AI Brainstorming",
+                description: "Miro-style flowcharts and mind maps powered by AI to generate content ideas and strategies.",
                 color: "text-green-500"
+              },
+              {
+                icon: Calendar,
+                title: "Smart Scheduling",
+                description: "Auto-schedule posts across platforms with optimal timing and content distribution.",
+                color: "text-purple-500"
               },
               {
                 icon: BarChart3,
                 title: "Performance Analytics",
-                description: "Advanced reporting with ROI tracking, engagement metrics, and custom dashboard views.",
-                color: "text-purple-500"
-              },
-              {
-                icon: Calendar,
-                title: "Content Scheduling",
-                description: "Integrated calendar with posting schedules, content approval flows, and automated reminders.",
+                description: "Track engagement, reach, and conversions with detailed analytics and trending insights.",
                 color: "text-orange-500"
               },
               {
-                icon: Brain,
-                title: "AI-Powered Insights",
-                description: "Smart recommendations for influencer selection, content optimization, and performance prediction.",
+                icon: Palette,
+                title: "Brand Assets",
+                description: "Centralized brand kit with logos, fonts, colors, and templates for consistent content creation.",
                 color: "text-pink-500"
               },
               {
-                icon: Shield,
-                title: "Compliance & Security",
-                description: "Built-in compliance checks, contract management, and enterprise-grade security features.",
+                icon: Zap,
+                title: "Bio Link Builder",
+                description: "Create stunning Instagram and social media bio pages with analytics and customization.",
                 color: "text-red-500"
               }
             ].map((feature, index) => (
@@ -313,10 +333,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Multi-Platform Campaign Management
+              Multi-Platform Content Creation
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Manage campaigns across all major social platforms from one unified dashboard
+              Create and distribute content across all major social platforms seamlessly
             </p>
           </div>
 
@@ -371,10 +391,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {[
-              { number: "50K+", label: "Projects Managed", icon: Target },
-              { number: "1M+", label: "Campaigns Delivered", icon: Rocket },
-              { number: "98%", label: "Client Satisfaction", icon: Star },
-              { number: "$2.5B", label: "Revenue Generated", icon: TrendingUp }
+              { number: "25K+", label: "Content Pieces Created", icon: Target },
+              { number: "500K+", label: "Posts Scheduled", icon: Rocket },
+              { number: "99%", label: "Creator Satisfaction", icon: Star },
+              { number: "$50M+", label: "Creator Revenue Enabled", icon: TrendingUp }
             ].map((stat, index) => (
               <div key={index} className="space-y-4 hover-scale animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className="flex justify-center">
