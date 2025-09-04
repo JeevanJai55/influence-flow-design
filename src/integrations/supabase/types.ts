@@ -14,6 +14,194 @@ export type Database = {
   }
   public: {
     Tables: {
+      calendar_events: {
+        Row: {
+          all_day: boolean | null
+          attendees: string[] | null
+          content_item_id: string | null
+          created_at: string
+          description: string | null
+          end_date: string
+          event_type: string
+          id: string
+          location: string | null
+          start_date: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          all_day?: boolean | null
+          attendees?: string[] | null
+          content_item_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_date: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          start_date: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          all_day?: boolean | null
+          attendees?: string[] | null
+          content_item_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_content: {
+        Row: {
+          campaign_id: string
+          content_item_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          campaign_id: string
+          content_item_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          campaign_id?: string
+          content_item_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_content_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_content_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          budget: number | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          goals: string[] | null
+          id: string
+          name: string
+          start_date: string | null
+          status: string
+          target_audience: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          goals?: string[] | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: string
+          target_audience?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          goals?: string[] | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: string
+          target_audience?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      content_items: {
+        Row: {
+          assignee_id: string | null
+          content_type: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          platform: string
+          priority: string
+          published_at: string | null
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          content_type?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          platform?: string
+          priority?: string
+          published_at?: string | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assignee_id?: string | null
+          content_type?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          platform?: string
+          priority?: string
+          published_at?: string | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

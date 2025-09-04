@@ -26,6 +26,8 @@ import {
   Activity
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import contentManagementDemo from "@/assets/content-management-demo.jpg";
+import aiBrainstormingDemo from "@/assets/ai-brainstorming-demo.jpg";
 
 export default function LandingPage() {
   return (
@@ -96,8 +98,8 @@ export default function LandingPage() {
                 </Link>
               </Button>
               
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-primary/20 hover:border-primary/40 hover-scale">
-                View Live Demo
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-primary/20 hover:border-primary/40 hover-scale" asChild>
+                <Link to="/dashboard">View Live Demo</Link>
               </Button>
             </div>
             
@@ -135,16 +137,28 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Content Management Dashboard Preview */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
+      {/* Interactive Content Management Demo */}
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+        <div className="max-w-7xl mx-auto relative">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <Badge className="mb-4 px-4 py-2 bg-primary/10 text-primary border-primary/20 hover-scale">
+              ✨ Live Demo Available
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
               Content Management Made Simple
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Transform your content creation workflow with visual boards, AI-powered brainstorming, and automated scheduling.
             </p>
+            <div className="mt-8">
+              <Button asChild size="lg" className="bg-gradient-primary hover:opacity-90 hover-scale shadow-elegant">
+                <Link to="/auth">
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Try Content Management
+                </Link>
+              </Button>
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -204,13 +218,49 @@ export default function LandingPage() {
               </Card>
             </div>
 
-            {/* Dashboard Mockup */}
-            <div className="relative animate-scale-in">
+            {/* Interactive Demo Images */}
+            <div className="space-y-6 animate-scale-in">
+              <Card className="overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-300 hover-scale cursor-pointer" onClick={() => window.open('/auth', '_blank')}>
+                <div className="relative">
+                  <img 
+                    src={contentManagementDemo} 
+                    alt="Content Management Dashboard Demo" 
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-semibold text-lg">Content Management</h3>
+                    <p className="text-sm opacity-90">Drag & drop workflow boards</p>
+                  </div>
+                  <Button size="sm" className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white border-white/20">
+                    Try Demo
+                  </Button>
+                </div>
+              </Card>
+              
+              <Card className="overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-300 hover-scale cursor-pointer" onClick={() => window.open('/auth', '_blank')}>
+                <div className="relative">
+                  <img 
+                    src={aiBrainstormingDemo} 
+                    alt="AI Brainstorming Interface Demo" 
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-semibold text-lg">AI Brainstorming</h3>
+                    <p className="text-sm opacity-90">Mind maps & flowcharts</p>
+                  </div>
+                  <Button size="sm" className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white border-white/20">
+                    Try Demo
+                  </Button>
+                </div>
+              </Card>
+
               <Card className="overflow-hidden shadow-elegant">
                 <CardHeader className="bg-gradient-primary text-primary-foreground">
                   <CardTitle className="flex items-center gap-2">
                     <Monitor className="h-5 w-5" />
-                    Campaign Dashboard
+                    Live Analytics
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
@@ -226,9 +276,9 @@ export default function LandingPage() {
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover-scale">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg hover-scale border border-primary/20 transition-all duration-300 hover:shadow-glow">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center shadow-md">
                           <Camera className="h-4 w-4 text-primary-foreground" />
                         </div>
                         <div>
@@ -236,12 +286,14 @@ export default function LandingPage() {
                           <div className="text-sm text-muted-foreground">12 items pending</div>
                         </div>
                       </div>
-                      <Button size="sm" variant="outline">Review</Button>
+                      <Button size="sm" variant="outline" className="hover:bg-primary hover:text-primary-foreground" asChild>
+                        <Link to="/auth">Review</Link>
+                      </Button>
                     </div>
                     
-                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover-scale">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-accent/10 to-primary/10 rounded-lg hover-scale border border-accent/20 transition-all duration-300 hover:shadow-glow">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center shadow-md">
                           <MessageSquare className="h-4 w-4 text-accent-foreground" />
                         </div>
                         <div>
@@ -249,7 +301,24 @@ export default function LandingPage() {
                           <div className="text-sm text-muted-foreground">3 unread</div>
                         </div>
                       </div>
-                      <Button size="sm" variant="outline">View</Button>
+                      <Button size="sm" variant="outline" className="hover:bg-accent hover:text-accent-foreground" asChild>
+                        <Link to="/auth">View</Link>
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-coral/10 to-mint/10 rounded-lg hover-scale border border-coral/20 transition-all duration-300 hover:shadow-glow">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-r from-coral to-mint rounded-full flex items-center justify-center shadow-md">
+                          <Calendar className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-medium">Scheduled Posts</div>
+                          <div className="text-sm text-muted-foreground">8 this week</div>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline" className="hover:bg-coral hover:text-white" asChild>
+                        <Link to="/auth">Schedule</Link>
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -277,50 +346,61 @@ export default function LandingPage() {
                 icon: Target,
                 title: "Content Planning",
                 description: "Visual content boards with drag-and-drop organization, content calendar integration, and workflow management.",
-                color: "text-blue-500"
+                color: "text-blue-500",
+                route: "/content"
               },
               {
                 icon: Brain,
                 title: "AI Brainstorming",
                 description: "Miro-style flowcharts and mind maps powered by AI to generate content ideas and strategies.",
-                color: "text-green-500"
+                color: "text-green-500",
+                route: "/brainstorming"
               },
               {
                 icon: Calendar,
                 title: "Smart Scheduling",
                 description: "Auto-schedule posts across platforms with optimal timing and content distribution.",
-                color: "text-purple-500"
+                color: "text-purple-500",
+                route: "/calendar"
               },
               {
                 icon: BarChart3,
                 title: "Performance Analytics",
                 description: "Track engagement, reach, and conversions with detailed analytics and trending insights.",
-                color: "text-orange-500"
+                color: "text-orange-500",
+                route: "/reports"
               },
               {
                 icon: Palette,
                 title: "Brand Assets",
                 description: "Centralized brand kit with logos, fonts, colors, and templates for consistent content creation.",
-                color: "text-pink-500"
+                color: "text-pink-500",
+                route: "/brand-assets"
               },
               {
                 icon: Zap,
                 title: "Bio Link Builder",
                 description: "Create stunning Instagram and social media bio pages with analytics and customization.",
-                color: "text-red-500"
+                color: "text-red-500",
+                route: "/bio-builder"
               }
             ].map((feature, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 hover-scale animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <Card key={index} className="group hover:shadow-elegant transition-all duration-300 border-border/50 hover:border-primary/20 hover-scale animate-fade-in cursor-pointer" 
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => window.location.href = '/auth'}>
                 <CardHeader className="space-y-4">
-                  <div className={`w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-glow">
+                    <feature.icon className="h-6 w-6 text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardTitle className="text-xl text-foreground dark:text-foreground">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base leading-relaxed">
+                  <CardDescription className="text-base leading-relaxed text-foreground/80 dark:text-foreground/80 mb-4">
                     {feature.description}
                   </CardDescription>
+                  <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    Try {feature.title} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -372,13 +452,18 @@ export default function LandingPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {item.platforms.map((platform, idx) => (
                       <Badge key={idx} variant="secondary" className="hover-scale">
                         {platform}
                       </Badge>
                     ))}
                   </div>
+                  <Button variant="ghost" size="sm" className="w-full group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300" asChild>
+                    <Link to="/auth">
+                      Explore Feature <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             ))}

@@ -1,319 +1,464 @@
-import { useState } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import Confetti from "react-confetti";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { v4 as uuidv4 } from 'uuid';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { 
-  Calendar,
-  Grid3X3,
-  List,
-  Plus,
+  Plus, 
+  Calendar as CalendarIcon, 
+  User, 
+  FileText, 
   Filter,
   Search,
   MoreHorizontal,
+  Target,
   Clock,
-  User,
-  MessageSquare
+  CheckCircle
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import Confetti from 'react-confetti';
 
 interface ContentItem {
   id: string;
   title: string;
   description: string;
-  status: string;
-  priority: string;
-  assignee: string;
-  dueDate: string;
-  comments: number;
-  platform: string;
+  status: 'draft' | 'in-progress' | 'review' | 'scheduled' | 'published';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  platform: 'instagram' | 'tiktok' | 'youtube' | 'twitter' | 'linkedin' | 'facebook';
+  content_type: 'post' | 'story' | 'reel' | 'video' | 'article';
+  due_date?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export default function ContentManagement() {
-  const [view, setView] = useState("board");
-  const [showConfetti, setShowConfetti] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [currentView, setCurrentView] = useState<'board' | 'list' | 'calendar'>('board');
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showNewContentDialog, setShowNewContentDialog] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
   const [newContentForm, setNewContentForm] = useState({
-    title: "",
-    description: "",
-    priority: "Medium",
-    assignee: "",
-    dueDate: "",
-    platform: "Instagram"
+    title: '',
+    description: '',
+    platform: 'instagram' as const,
+    priority: 'medium' as const,
+    content_type: 'post' as const,
+    due_date: ''
   });
 
-  const [contentItems, setContentItems] = useState<ContentItem[]>([
-    {
-      id: "1",
-      title: "Summer Collection Post",
-      description: "Instagram carousel for new summer collection launch",
-      status: "In Review",
-      priority: "High",
-      assignee: "Sarah Johnson",
-      dueDate: "Aug 8",
-      comments: 3,
-      platform: "Instagram"
-    },
-    {
-      id: "2",
-      title: "TikTok Dance Challenge",
-      description: "Viral dance content for fitness brand collaboration",
-      status: "In Progress",
-      priority: "Medium",
-      assignee: "Mike Chen",
-      dueDate: "Aug 10",
-      comments: 1,
-      platform: "TikTok"
-    },
-    {
-      id: "3",
-      title: "Product Review Video",
-      description: "Unboxing and review video for tech gadget",
-      status: "Publish",
-      priority: "Low",
-      assignee: "Emma Davis",
-      dueDate: "Aug 5",
-      comments: 5,
-      platform: "YouTube"
-    },
-    {
-      id: "4",
-      title: "Brand Story Reel",
-      description: "Behind-the-scenes content for brand storytelling",
-      status: "To Do",
-      priority: "High",
-      assignee: "Alex Kim",
-      dueDate: "Aug 12",
-      comments: 0,
-      platform: "Instagram"
+  const statusOrder = ['draft', 'in-progress', 'review', 'scheduled', 'published'];
+
+  // Fetch content items
+  const fetchContentItems = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('content_items')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setContentItems((data || []) as ContentItem[]);
+    } catch (error) {
+      console.error('Error fetching content items:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load content items",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ]);
+  }, [user, toast]);
 
-  const statusOrder = ["To Do", "In Progress", "In Review", "Publish"];
+  useEffect(() => {
+    fetchContentItems();
+  }, [fetchContentItems]);
 
-  const statusColumns = statusOrder.reduce((acc, status) => {
-    acc[status] = contentItems.filter(item => item.status === status);
-    return acc;
-  }, {} as Record<string, ContentItem[]>);
-
-  const onDragEnd = (result: DropResult) => {
+  // Handle drag and drop
+  const onDragEnd = useCallback(async (result: DropResult) => {
     const { destination, source, draggableId } = result;
 
-    if (!destination) return;
-    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+    if (!destination || !user) return;
+    if (destination.droppableId === source.droppableId) return;
 
-    const newStatus = destination.droppableId;
+    const newStatus = destination.droppableId as ContentItem['status'];
     
-    setContentItems(prev => 
-      prev.map(item => 
+    try {
+      const { error } = await supabase
+        .from('content_items')
+        .update({ 
+          status: newStatus,
+          published_at: newStatus === 'published' ? new Date().toISOString() : null
+        })
+        .eq('id', draggableId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setContentItems(prev => prev.map(item => 
         item.id === draggableId 
           ? { ...item, status: newStatus }
           : item
-      )
-    );
+      ));
 
-    // Show confetti if moved to "Publish"
-    if (newStatus === "Publish") {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 8000);
+      // Show confetti for published items
+      if (newStatus === 'published') {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+        toast({
+          title: "🎉 Content Published!",
+          description: "Your content has been successfully published.",
+        });
+      }
+    } catch (error) {
+      console.error('Error updating content status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update content status",
+        variant: "destructive"
+      });
+    }
+  }, [user, toast]);
+
+  // Create new content item
+  const handleCreateContent = async () => {
+    if (!user || !newContentForm.title.trim()) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('content_items')
+        .insert({
+          user_id: user.id,
+          title: newContentForm.title,
+          description: newContentForm.description,
+          platform: newContentForm.platform,
+          priority: newContentForm.priority,
+          content_type: newContentForm.content_type,
+          due_date: newContentForm.due_date || null,
+          status: 'draft'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setContentItems(prev => [data as ContentItem, ...prev]);
+      setNewContentForm({
+        title: '',
+        description: '',
+        platform: 'instagram',
+        priority: 'medium',
+        content_type: 'post',
+        due_date: ''
+      });
+      setShowNewContentDialog(false);
+      
+      toast({
+        title: "Content Created",
+        description: "New content item has been added to your board.",
+      });
+    } catch (error) {
+      console.error('Error creating content:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create content item",
+        variant: "destructive"
+      });
     }
   };
 
-  const handleCreateContent = () => {
-    if (!newContentForm.title || !newContentForm.description) return;
-    
-    const newContent: ContentItem = {
-      id: uuidv4(),
-      title: newContentForm.title,
-      description: newContentForm.description,
-      status: "To Do",
-      priority: newContentForm.priority,
-      assignee: newContentForm.assignee || "Unassigned",
-      dueDate: newContentForm.dueDate || "TBD",
-      comments: 0,
-      platform: newContentForm.platform
-    };
-
-    setContentItems(prev => [...prev, newContent]);
-    setNewContentForm({
-      title: "",
-      description: "",
-      priority: "Medium",
-      assignee: "",
-      dueDate: "",
-      platform: "Instagram"
+  // Filter content items
+  const filteredItems = useMemo(() => {
+    return contentItems.filter(item => {
+      const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           item.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = filterStatus === 'all' || item.status === filterStatus;
+      return matchesSearch && matchesFilter;
     });
-    setShowNewContentDialog(false);
-  };
+  }, [contentItems, searchTerm, filterStatus]);
+
+  // Group items by status for board view
+  const groupedItems = useMemo(() => {
+    return statusOrder.reduce((acc, status) => {
+      acc[status] = filteredItems.filter(item => item.status === status);
+      return acc;
+    }, {} as Record<string, ContentItem[]>);
+  }, [filteredItems]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "High": return "bg-red-500";
-      case "Medium": return "bg-yellow-500";
-      case "Low": return "bg-green-500";
-      default: return "bg-gray-500";
+      case 'urgent': return 'bg-red-500/10 text-red-500 border-red-500/20';
+      case 'high': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
+      case 'medium': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+      case 'low': return 'bg-green-500/10 text-green-500 border-green-500/20';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "To Do": return "bg-muted";
-      case "In Progress": return "bg-blue-500/10 text-blue-600 border-blue-200";
-      case "In Review": return "bg-orange-500/10 text-orange-600 border-orange-200";
-      case "Publish": return "bg-green-500/10 text-green-600 border-green-200";
-      default: return "bg-muted";
+      case 'draft': return 'bg-gray-500/10 text-gray-500';
+      case 'in-progress': return 'bg-blue-500/10 text-blue-500';
+      case 'review': return 'bg-yellow-500/10 text-yellow-500';
+      case 'scheduled': return 'bg-purple-500/10 text-purple-500';
+      case 'published': return 'bg-green-500/10 text-green-500';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
-  const ContentCard = ({ item, index }: { item: ContentItem; index: number }) => (
+  const ContentCard = React.memo(({ item, index }: { item: ContentItem; index: number }) => (
     <Draggable draggableId={item.id} index={index}>
       {(provided, snapshot) => (
-        <Card 
+        <Card
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`mb-3 hover:shadow-md transition-shadow cursor-pointer ${
-            snapshot.isDragging ? 'rotate-3 shadow-lg' : ''
+          className={`mb-3 cursor-move transition-all duration-200 ${
+            snapshot.isDragging ? 'rotate-2 shadow-lg' : 'hover:shadow-md'
           }`}
         >
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <h4 className="font-semibold text-sm text-foreground">{item.title}</h4>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <MoreHorizontal className="h-3 w-3" />
-              </Button>
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <CardTitle className="text-sm font-medium line-clamp-2">{item.title}</CardTitle>
+              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
             </div>
-            <p className="text-xs text-muted-foreground mb-3">{item.description}</p>
-            
-            <div className="flex items-center gap-2 mb-3">
-              <div className={`w-2 h-2 rounded-full ${getPriorityColor(item.priority)}`} />
-              <span className="text-xs text-muted-foreground">{item.priority}</span>
-              <Badge variant="secondary" className="text-xs">{item.platform}</Badge>
+            {item.description && (
+              <CardDescription className="text-xs line-clamp-2">
+                {item.description}
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge variant="outline" className={`text-xs ${getPriorityColor(item.priority)}`}>
+                {item.priority}
+              </Badge>
+              <Badge variant="secondary" className="text-xs">
+                {item.platform}
+              </Badge>
             </div>
-
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <User className="h-3 w-3" />
-                <span>{item.assignee}</span>
+            {item.due_date && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                {new Date(item.due_date).toLocaleDateString()}
               </div>
-              <div className="flex items-center gap-2">
-                {item.comments > 0 && (
-                  <div className="flex items-center gap-1">
-                    <MessageSquare className="h-3 w-3" />
-                    <span>{item.comments}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  <span>{item.dueDate}</span>
-                </div>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       )}
     </Draggable>
-  );
+  ));
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      {showConfetti && (
-        <div className="fixed inset-0 z-50 pointer-events-none">
-          <Confetti
-            width={window.innerWidth}
-            height={window.innerHeight}
-            recycle={false}
-            numberOfPieces={1000}
-            gravity={0.12}
-            initialVelocityY={25}
-            colors={['#10B981', '#059669', '#047857', '#065F46', '#064E3B']}
+    <div className="space-y-6">
+      {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Content Management</h1>
+          <p className="text-muted-foreground">Organize and track your content creation workflow</p>
+        </div>
+        
+        <Dialog open={showNewContentDialog} onOpenChange={setShowNewContentDialog}>
+          <DialogTrigger asChild>
+            <Button className="bg-gradient-primary hover:opacity-90">
+              <Plus className="h-4 w-4 mr-2" />
+              New Content
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create New Content</DialogTitle>
+              <DialogDescription>
+                Add a new content item to your workflow board.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-foreground dark:text-foreground">Title</label>
+                <Input
+                  value={newContentForm.title}
+                  onChange={(e) => setNewContentForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Content title..."
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground dark:text-foreground">Description</label>
+                <Textarea
+                  value={newContentForm.description}
+                  onChange={(e) => setNewContentForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Content description..."
+                  className="mt-1"
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground dark:text-foreground">Platform</label>
+                  <Select 
+                    value={newContentForm.platform} 
+                    onValueChange={(value: any) => setNewContentForm(prev => ({ ...prev, platform: value }))}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="instagram">Instagram</SelectItem>
+                      <SelectItem value="tiktok">TikTok</SelectItem>
+                      <SelectItem value="youtube">YouTube</SelectItem>
+                      <SelectItem value="twitter">Twitter</SelectItem>
+                      <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      <SelectItem value="facebook">Facebook</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground dark:text-foreground">Priority</label>
+                  <Select 
+                    value={newContentForm.priority} 
+                    onValueChange={(value: any) => setNewContentForm(prev => ({ ...prev, priority: value }))}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground dark:text-foreground">Content Type</label>
+                  <Select 
+                    value={newContentForm.content_type} 
+                    onValueChange={(value: any) => setNewContentForm(prev => ({ ...prev, content_type: value }))}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="post">Post</SelectItem>
+                      <SelectItem value="story">Story</SelectItem>
+                      <SelectItem value="reel">Reel</SelectItem>
+                      <SelectItem value="video">Video</SelectItem>
+                      <SelectItem value="article">Article</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground dark:text-foreground">Due Date</label>
+                  <Input
+                    type="date"
+                    value={newContentForm.due_date}
+                    onChange={(e) => setNewContentForm(prev => ({ ...prev, due_date: e.target.value }))}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={handleCreateContent} className="flex-1">
+                  Create Content
+                </Button>
+                <Button variant="outline" onClick={() => setShowNewContentDialog(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Filters and Search */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search content..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
           />
         </div>
-      )}
-
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Content Management</h1>
-          <p className="text-muted-foreground text-sm md:text-base">
-            Plan, create, and track your content pipeline
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <Button variant="outline" className="transition-smooth text-sm md:text-base">
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-full sm:w-[180px]">
             <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-          <Button 
-            onClick={() => setShowNewContentDialog(true)}
-            className="bg-gradient-primary hover:shadow-glow transition-smooth text-sm md:text-base"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Content
-          </Button>
-        </div>
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="in-progress">In Progress</SelectItem>
+            <SelectItem value="review">Review</SelectItem>
+            <SelectItem value="scheduled">Scheduled</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* View Tabs */}
-      <Tabs value={view} onValueChange={setView} className="w-full">
-        <div className="flex items-center justify-between">
-          <TabsList>
-            <TabsTrigger value="board" className="flex items-center gap-2">
-              <Grid3X3 className="h-4 w-4" />
-              Board
-            </TabsTrigger>
-            <TabsTrigger value="list" className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              List
-            </TabsTrigger>
-            <TabsTrigger value="calendar" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Calendar
-            </TabsTrigger>
-          </TabsList>
+      <Tabs value={currentView} onValueChange={(value: any) => setCurrentView(value)}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="board">Board</TabsTrigger>
+          <TabsTrigger value="list">List</TabsTrigger>
+          <TabsTrigger value="calendar">Calendar</TabsTrigger>
+        </TabsList>
 
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                placeholder="Search content..."
-                className="pl-10 pr-4 py-2 border border-border rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Board View with Drag & Drop */}
-        <TabsContent value="board" className="mt-6">
+        {/* Board View */}
+        <TabsContent value="board" className="space-y-4">
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {statusOrder.map((status) => (
-                <div key={status} className="space-y-3 min-w-[280px] md:min-w-0">
+                <div key={status} className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-foreground text-sm md:text-base">{status}</h3>
-                    <Badge variant="secondary" className="text-xs">
-                      {statusColumns[status].length}
+                    <h3 className="font-medium capitalize text-foreground dark:text-foreground">
+                      {status.replace('-', ' ')}
+                    </h3>
+                    <Badge variant="secondary" className={getStatusColor(status)}>
+                      {groupedItems[status]?.length || 0}
                     </Badge>
                   </div>
+                  
                   <Droppable droppableId={status}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`min-h-[200px] space-y-2 md:space-y-3 p-2 rounded-lg border-2 border-dashed transition-colors ${
+                        className={`min-h-[200px] p-3 rounded-lg border-2 border-dashed transition-colors ${
                           snapshot.isDraggingOver 
                             ? 'border-primary bg-primary/5' 
-                            : 'border-border/30'
+                            : 'border-border/30 bg-muted/20'
                         }`}
                       >
-                        {statusColumns[status].map((item, index) => (
+                        {groupedItems[status]?.map((item, index) => (
                           <ContentCard key={item.id} item={item} index={index} />
                         ))}
                         {provided.placeholder}
@@ -327,158 +472,70 @@ export default function ContentManagement() {
         </TabsContent>
 
         {/* List View */}
-        <TabsContent value="list" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg md:text-xl">All Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {contentItems.map((item) => (
-                  <div key={item.id} className="flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 rounded-lg border border-border/30 hover:bg-muted/30 transition-colors gap-3">
-                    <div className="flex items-center space-x-3 md:space-x-4">
-                      <div className={`w-3 h-3 rounded-full ${getPriorityColor(item.priority)}`} />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-foreground text-sm md:text-base">{item.title}</h4>
-                        <p className="text-xs md:text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                      <Badge className={`${getStatusColor(item.status)} text-xs`}>{item.status}</Badge>
-                      <Badge variant="secondary" className="text-xs">{item.platform}</Badge>
-                      <span className="text-xs md:text-sm text-muted-foreground">{item.assignee}</span>
-                      <span className="text-xs md:text-sm text-muted-foreground">{item.dueDate}</span>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 md:h-8 md:w-8">
-                        <MoreHorizontal className="h-3 w-3 md:h-4 md:w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+        <TabsContent value="list" className="space-y-4">
+          <div className="rounded-lg border">
+            <div className="grid grid-cols-6 gap-4 p-4 border-b font-medium text-sm text-foreground dark:text-foreground">
+              <div>Title</div>
+              <div>Status</div>
+              <div>Priority</div>
+              <div>Platform</div>
+              <div>Due Date</div>
+              <div>Actions</div>
+            </div>
+            {filteredItems.map((item) => (
+              <div key={item.id} className="grid grid-cols-6 gap-4 p-4 border-b hover:bg-muted/50 transition-colors">
+                <div>
+                  <div className="font-medium text-sm">{item.title}</div>
+                  {item.description && (
+                    <div className="text-xs text-muted-foreground line-clamp-1">{item.description}</div>
+                  )}
+                </div>
+                <div>
+                  <Badge className={getStatusColor(item.status)}>
+                    {item.status.replace('-', ' ')}
+                  </Badge>
+                </div>
+                <div>
+                  <Badge variant="outline" className={getPriorityColor(item.priority)}>
+                    {item.priority}
+                  </Badge>
+                </div>
+                <div>
+                  <Badge variant="secondary">{item.platform}</Badge>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {item.due_date ? new Date(item.due_date).toLocaleDateString() : '-'}
+                </div>
+                <div>
+                  <Button variant="ghost" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            ))}
+          </div>
         </TabsContent>
 
         {/* Calendar View */}
-        <TabsContent value="calendar" className="mt-6">
+        <TabsContent value="calendar" className="space-y-4">
           <Card>
-            <CardContent className="p-6">
-              <div className="text-center py-12">
-                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Calendar View</h3>
-                <p className="text-muted-foreground">
-                  Calendar view with content scheduling coming soon!
-                </p>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CalendarIcon className="h-5 w-5" />
+                Calendar View
+              </CardTitle>
+              <CardDescription>
+                Calendar integration coming soon! Track your content schedule and deadlines.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12 text-muted-foreground">
+                📅 Calendar view will be available in the next update
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* New Content Dialog */}
-      <Dialog open={showNewContentDialog} onOpenChange={setShowNewContentDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Create New Content</DialogTitle>
-            <DialogDescription>
-              Add a new content item to your pipeline.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
-                Title
-              </Label>
-              <Input
-                id="title"
-                value={newContentForm.title}
-                onChange={(e) => setNewContentForm(prev => ({ ...prev, title: e.target.value }))}
-                className="col-span-3"
-                placeholder="Content title..."
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                value={newContentForm.description}
-                onChange={(e) => setNewContentForm(prev => ({ ...prev, description: e.target.value }))}
-                className="col-span-3"
-                placeholder="Content description..."
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="platform" className="text-right">
-                Platform
-              </Label>
-              <Select 
-                value={newContentForm.platform} 
-                onValueChange={(value) => setNewContentForm(prev => ({ ...prev, platform: value }))}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Instagram">Instagram</SelectItem>
-                  <SelectItem value="TikTok">TikTok</SelectItem>
-                  <SelectItem value="YouTube">YouTube</SelectItem>
-                  <SelectItem value="Twitter">Twitter</SelectItem>
-                  <SelectItem value="LinkedIn">LinkedIn</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="priority" className="text-right">
-                Priority
-              </Label>
-              <Select 
-                value={newContentForm.priority} 
-                onValueChange={(value) => setNewContentForm(prev => ({ ...prev, priority: value }))}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="High">High</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="assignee" className="text-right">
-                Assignee
-              </Label>
-              <Input
-                id="assignee"
-                value={newContentForm.assignee}
-                onChange={(e) => setNewContentForm(prev => ({ ...prev, assignee: e.target.value }))}
-                className="col-span-3"
-                placeholder="Assignee name..."
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="dueDate" className="text-right">
-                Due Date
-              </Label>
-              <Input
-                id="dueDate"
-                type="date"
-                value={newContentForm.dueDate}
-                onChange={(e) => setNewContentForm(prev => ({ ...prev, dueDate: e.target.value }))}
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" onClick={handleCreateContent}>
-              Create Content
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
