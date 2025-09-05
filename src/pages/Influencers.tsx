@@ -16,96 +16,12 @@ import {
   Mail,
   Phone
 } from "lucide-react";
+import { useInfluencers } from "@/hooks/useInfluencers";
+import { NewInfluencerDialog } from "@/components/NewInfluencerDialog";
 
 export default function Influencers() {
+  const { influencers, loading } = useInfluencers();
   const [searchTerm, setSearchTerm] = useState("");
-
-  const influencers = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      handle: "@sarahjstyle",
-      avatar: "SJ",
-      platform: "Instagram",
-      followers: "125K",
-      engagement: "9.2%",
-      category: "Fashion",
-      location: "New York, NY",
-      rate: "$1,200",
-      status: "Active",
-      lastCampaign: "Summer Collection"
-    },
-    {
-      id: 2,
-      name: "Mike Chen",
-      handle: "@mikecfit",
-      avatar: "MC",
-      platform: "YouTube",
-      followers: "89K",
-      engagement: "8.7%",
-      category: "Fitness",
-      location: "Los Angeles, CA",
-      rate: "$950",
-      status: "Available",
-      lastCampaign: "Protein Launch"
-    },
-    {
-      id: 3,
-      name: "Emma Davis",
-      handle: "@emmaeats",
-      avatar: "ED",
-      platform: "Instagram",
-      followers: "156K",
-      engagement: "7.9%",
-      category: "Food",
-      location: "Chicago, IL",
-      rate: "$1,500",
-      status: "Busy",
-      lastCampaign: "Restaurant Review"
-    },
-    {
-      id: 4,
-      name: "Alex Rivera",
-      handle: "@alextech",
-      avatar: "AR",
-      platform: "YouTube",
-      followers: "234K",
-      engagement: "6.8%",
-      category: "Technology",
-      location: "San Francisco, CA",
-      rate: "$2,100",
-      status: "Active",
-      lastCampaign: "Gadget Reviews"
-    },
-    {
-      id: 5,
-      name: "Lisa Park",
-      handle: "@lisalooks",
-      avatar: "LP",
-      platform: "Instagram",
-      followers: "98K",
-      engagement: "10.1%",
-      category: "Beauty",
-      location: "Miami, FL",
-      rate: "$1,100",
-      status: "Available",
-      lastCampaign: "Skincare Line"
-    },
-    {
-      id: 6,
-      name: "David Wilson",
-      handle: "@davidtravels",
-      avatar: "DW",
-      platform: "Instagram",
-      followers: "187K",
-      engagement: "8.3%",
-      category: "Travel",
-      location: "Austin, TX",
-      rate: "$1,800",
-      status: "Active",
-      lastCampaign: "Hotel Chain"
-    }
-  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -134,8 +50,14 @@ export default function Influencers() {
   const filteredInfluencers = influencers.filter(influencer =>
     influencer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     influencer.handle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    influencer.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (influencer.category && influencer.category.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const formatFollowerCount = (count: number) => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(0)}K`;
+    return count.toString();
+  };
 
   return (
     <div className="space-y-6">
@@ -152,10 +74,7 @@ export default function Influencers() {
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
-          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Influencer
-          </Button>
+          <NewInfluencerDialog />
         </div>
       </div>
 
@@ -171,94 +90,109 @@ export default function Influencers() {
       </div>
 
       {/* Influencers Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredInfluencers.map((influencer) => (
-          <Card key={influencer.id} className="transition-smooth hover:shadow-elegant border-border/50">
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
-                      {influencer.avatar}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{influencer.name}</h3>
-                    <p className="text-sm text-muted-foreground">{influencer.handle}</p>
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground mt-4">Loading influencers...</p>
+        </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredInfluencers.map((influencer) => (
+            <Card key={influencer.id} className="transition-smooth hover:shadow-elegant border-border/50">
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
+                        {influencer.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{influencer.name}</h3>
+                      <p className="text-sm text-muted-foreground">{influencer.handle}</p>
+                    </div>
+                  </div>
+                  <Badge className={getStatusColor(influencer.status)}>
+                    {influencer.status}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="flex items-center justify-center mb-1">
+                      {getPlatformIcon(influencer.platform)}
+                    </div>
+                    <div className="text-sm font-medium text-foreground">
+                      {formatFollowerCount(influencer.followers_count)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Followers</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="flex items-center justify-center mb-1">
+                      <Star className="h-4 w-4 text-golden" />
+                    </div>
+                    <div className="text-sm font-medium text-foreground">
+                      {influencer.engagement_rate.toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">Engagement</div>
                   </div>
                 </div>
-                <Badge className={getStatusColor(influencer.status)}>
-                  {influencer.status}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center justify-center mb-1">
-                    {getPlatformIcon(influencer.platform)}
-                  </div>
-                  <div className="text-sm font-medium text-foreground">{influencer.followers}</div>
-                  <div className="text-xs text-muted-foreground">Followers</div>
-                </div>
-                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center justify-center mb-1">
-                    <Star className="h-4 w-4 text-golden" />
-                  </div>
-                  <div className="text-sm font-medium text-foreground">{influencer.engagement}</div>
-                  <div className="text-xs text-muted-foreground">Engagement</div>
-                </div>
-              </div>
 
-              {/* Details */}
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="text-foreground font-medium">{influencer.category}</span>
+                {/* Details */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Category:</span>
+                    <span className="text-foreground font-medium">{influencer.category || 'Not specified'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Location:</span>
+                    <span className="text-foreground">{influencer.location || 'Not specified'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Rate:</span>
+                    <span className="text-foreground font-medium">
+                      {influencer.rate_per_post ? `$${influencer.rate_per_post.toLocaleString()}` : 'Not set'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Platform:</span>
+                    <span className="text-foreground capitalize">{influencer.platform}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Location:</span>
-                  <span className="text-foreground">{influencer.location}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Rate:</span>
-                  <span className="text-foreground font-medium">{influencer.rate}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Last Campaign:</span>
-                  <span className="text-foreground">{influencer.lastCampaign}</span>
-                </div>
-              </div>
 
-              {/* Actions */}
-              <div className="flex space-x-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Mail className="h-3 w-3 mr-1" />
-                  Contact
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1">
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  Profile
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                {/* Actions */}
+                <div className="flex space-x-2 pt-2">
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <Mail className="h-3 w-3 mr-1" />
+                    Contact
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Profile
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Empty State */}
-      {filteredInfluencers.length === 0 && (
+      {!loading && filteredInfluencers.length === 0 && (
         <div className="text-center py-12">
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">No influencers found</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            {searchTerm ? "No influencers found" : "No influencers yet"}
+          </h3>
           <p className="text-muted-foreground mb-4">
-            Try adjusting your search terms or add new influencers to your network.
+            {searchTerm 
+              ? "Try adjusting your search terms or add new influencers to your network."
+              : "Add influencers to your network to get started with your campaigns."
+            }
           </p>
-          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Your First Influencer
-          </Button>
+          <NewInfluencerDialog />
         </div>
       )}
     </div>

@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics: {
+        Row: {
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_value: number
+          recorded_at: string
+          user_id: string
+        }
+        Insert: {
+          entity_id: string
+          entity_type: string
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_value: number
+          recorded_at?: string
+          user_id: string
+        }
+        Update: {
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_value?: number
+          recorded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       calendar_events: {
         Row: {
           all_day: boolean | null
@@ -102,6 +135,54 @@ export type Database = {
             columns: ["content_item_id"]
             isOneToOne: false
             referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_influencers: {
+        Row: {
+          campaign_id: string
+          content_delivered_at: string | null
+          created_at: string
+          id: string
+          influencer_id: string
+          performance_metrics: Json | null
+          rate_agreed: number | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          content_delivered_at?: string | null
+          created_at?: string
+          id?: string
+          influencer_id: string
+          performance_metrics?: Json | null
+          rate_agreed?: number | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          content_delivered_at?: string | null
+          created_at?: string
+          id?: string
+          influencer_id?: string
+          performance_metrics?: Json | null
+          rate_agreed?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_influencers_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_influencers_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
+            referencedRelation: "influencers"
             referencedColumns: ["id"]
           },
         ]
@@ -202,6 +283,104 @@ export type Database = {
         }
         Relationships: []
       }
+      content_versions: {
+        Row: {
+          changes_description: string | null
+          content_item_id: string
+          content_url: string | null
+          created_at: string
+          id: string
+          preview_url: string | null
+          version_number: number
+        }
+        Insert: {
+          changes_description?: string | null
+          content_item_id: string
+          content_url?: string | null
+          created_at?: string
+          id?: string
+          preview_url?: string | null
+          version_number?: number
+        }
+        Update: {
+          changes_description?: string | null
+          content_item_id?: string
+          content_url?: string | null
+          created_at?: string
+          id?: string
+          preview_url?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_versions_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      influencers: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          category: string | null
+          created_at: string
+          email: string | null
+          engagement_rate: number | null
+          followers_count: number | null
+          handle: string
+          id: string
+          location: string | null
+          name: string
+          phone: string | null
+          platform: string
+          rate_per_post: number | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          category?: string | null
+          created_at?: string
+          email?: string | null
+          engagement_rate?: number | null
+          followers_count?: number | null
+          handle: string
+          id?: string
+          location?: string | null
+          name: string
+          phone?: string | null
+          platform?: string
+          rate_per_post?: number | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          category?: string | null
+          created_at?: string
+          email?: string | null
+          engagement_rate?: number | null
+          followers_count?: number | null
+          handle?: string
+          id?: string
+          location?: string | null
+          name?: string
+          phone?: string | null
+          platform?: string
+          rate_per_post?: number | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -235,6 +414,63 @@ export type Database = {
           updated_at?: string
           user_id?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      templates: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          downloads_count: number | null
+          file_url: string | null
+          format: string
+          id: string
+          is_premium: boolean | null
+          name: string
+          price: number | null
+          rating: number | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          downloads_count?: number | null
+          file_url?: string | null
+          format?: string
+          id?: string
+          is_premium?: boolean | null
+          name: string
+          price?: number | null
+          rating?: number | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          downloads_count?: number | null
+          file_url?: string | null
+          format?: string
+          id?: string
+          is_premium?: boolean | null
+          name?: string
+          price?: number | null
+          rating?: number | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

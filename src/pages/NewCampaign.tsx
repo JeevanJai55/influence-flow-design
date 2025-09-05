@@ -17,9 +17,15 @@ import {
   Youtube,
   Twitter
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useCampaigns } from "@/hooks/useCampaigns";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewCampaign() {
+  const navigate = useNavigate();
+  const { createCampaign } = useCampaigns();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -48,6 +54,30 @@ export default function NewCampaign() {
     }));
   };
 
+  const handleSubmit = async () => {
+    if (!formData.name) {
+      toast({
+        title: "Error",
+        description: "Campaign name is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    const campaignData = {
+      ...formData,
+      budget: formData.budget ? parseFloat(formData.budget) : undefined,
+      goals: formData.platforms, // Using platforms as goals for now
+    };
+
+    const result = await createCampaign(campaignData);
+    if (result) {
+      navigate('/campaigns');
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -66,9 +96,9 @@ export default function NewCampaign() {
           </div>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline">Save as Draft</Button>
-          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
-            Create Campaign
+          <Button variant="outline" onClick={() => navigate('/campaigns')}>Save as Draft</Button>
+          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth" onClick={handleSubmit} disabled={loading}>
+            {loading ? 'Creating...' : 'Create Campaign'}
           </Button>
         </div>
       </div>

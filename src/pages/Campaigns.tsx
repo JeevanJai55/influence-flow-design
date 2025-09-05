@@ -13,70 +13,20 @@ import {
   Edit,
   MoreHorizontal
 } from "lucide-react";
+import { useCampaigns } from "@/hooks/useCampaigns";
+import { useInfluencers } from "@/hooks/useInfluencers";
+import { NewCampaignDialog } from "@/components/NewCampaignDialog";
+import { useNavigate } from "react-router-dom";
 
 export default function Campaigns() {
-  const campaigns = [
-    {
-      id: 1,
-      name: "Summer Collection Launch",
-      brand: "FashionCo",
-      status: "Active",
-      progress: 75,
-      budget: "$25,000",
-      spent: "$18,750",
-      influencers: 12,
-      startDate: "2024-01-15",
-      endDate: "2024-02-15",
-      description: "Promoting the latest summer fashion collection with top style influencers",
-      platforms: ["Instagram", "TikTok"],
-      teamMembers: ["SJ", "MC", "ED"]
-    },
-    {
-      id: 2,
-      name: "Beauty Product Review",
-      brand: "GlowUp Cosmetics",
-      status: "Planning",
-      progress: 25,
-      budget: "$15,000",
-      spent: "$3,750",
-      influencers: 8,
-      startDate: "2024-02-01",
-      endDate: "2024-03-01",
-      description: "Authentic reviews of new skincare line by beauty influencers",
-      platforms: ["Instagram", "YouTube"],
-      teamMembers: ["LP", "AR"]
-    },
-    {
-      id: 3,
-      name: "Fitness Challenge",
-      brand: "ActiveLife",
-      status: "Completed",
-      progress: 100,
-      budget: "$30,000",
-      spent: "$28,500",
-      influencers: 15,
-      startDate: "2023-12-01",
-      endDate: "2024-01-01",
-      description: "30-day fitness challenge featuring workout gear and supplements",
-      platforms: ["Instagram", "YouTube", "TikTok"],
-      teamMembers: ["MC", "DW", "SJ"]
-    },
-    {
-      id: 4,
-      name: "Tech Product Launch",
-      brand: "TechFlow",
-      status: "Draft",
-      progress: 10,
-      budget: "$40,000",
-      spent: "$0",
-      influencers: 6,
-      startDate: "2024-03-01",
-      endDate: "2024-04-01",
-      description: "Launching innovative smart home devices with tech reviewers",
-      platforms: ["YouTube", "Instagram"],
-      teamMembers: ["AR"]
-    }
-  ];
+  const navigate = useNavigate();
+  const { campaigns, loading } = useCampaigns();
+  const { influencers } = useInfluencers();
+
+  // Calculate metrics from real data
+  const totalBudget = campaigns.reduce((sum, c) => sum + (c.budget || 0), 0);
+  const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
+  const activeInfluencers = influencers.filter(i => i.status === 'active').length;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -104,14 +54,11 @@ export default function Campaigns() {
           </p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" className="transition-smooth">
+          <Button variant="outline" className="transition-smooth" onClick={() => navigate('/content-calendar')}>
             <Calendar className="h-4 w-4 mr-2" />
             View Calendar
           </Button>
-          <Button className="bg-gradient-primary hover:shadow-glow transition-smooth">
-            <Plus className="h-4 w-4 mr-2" />
-            New Campaign
-          </Button>
+          <NewCampaignDialog />
         </div>
       </div>
 
@@ -122,7 +69,7 @@ export default function Campaigns() {
             <div className="flex items-center space-x-2">
               <Target className="h-5 w-5 text-primary" />
               <div>
-                <div className="text-2xl font-bold text-foreground">18</div>
+                <div className="text-2xl font-bold text-foreground">{campaigns.length}</div>
                 <p className="text-xs text-muted-foreground">Total Campaigns</p>
               </div>
             </div>
@@ -133,7 +80,7 @@ export default function Campaigns() {
             <div className="flex items-center space-x-2">
               <Users className="h-5 w-5 text-mint" />
               <div>
-                <div className="text-2xl font-bold text-foreground">41</div>
+                <div className="text-2xl font-bold text-foreground">{activeInfluencers}</div>
                 <p className="text-xs text-muted-foreground">Active Influencers</p>
               </div>
             </div>
@@ -144,7 +91,7 @@ export default function Campaigns() {
             <div className="flex items-center space-x-2">
               <DollarSign className="h-5 w-5 text-golden" />
               <div>
-                <div className="text-2xl font-bold text-foreground">$110K</div>
+                <div className="text-2xl font-bold text-foreground">${(totalBudget / 1000).toFixed(0)}K</div>
                 <p className="text-xs text-muted-foreground">Total Budget</p>
               </div>
             </div>
@@ -155,7 +102,11 @@ export default function Campaigns() {
             <div className="flex items-center space-x-2">
               <Eye className="h-5 w-5 text-coral" />
               <div>
-                <div className="text-2xl font-bold text-foreground">2.1M</div>
+                <div className="text-2xl font-bold text-foreground">
+                  {influencers.reduce((sum, i) => sum + i.followers_count, 0) > 1000000 
+                    ? `${(influencers.reduce((sum, i) => sum + i.followers_count, 0) / 1000000).toFixed(1)}M` 
+                    : `${(influencers.reduce((sum, i) => sum + i.followers_count, 0) / 1000).toFixed(0)}K`}
+                </div>
                 <p className="text-xs text-muted-foreground">Total Reach</p>
               </div>
             </div>
@@ -165,93 +116,107 @@ export default function Campaigns() {
 
       {/* Campaigns List */}
       <div className="space-y-4">
-        {campaigns.map((campaign) => (
-          <Card key={campaign.id} className="transition-smooth hover:shadow-elegant border-border/50">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3">
-                    <CardTitle className="text-foreground">{campaign.name}</CardTitle>
-                    <Badge className={getStatusColor(campaign.status)}>
-                      {campaign.status}
-                    </Badge>
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="text-muted-foreground mt-4">Loading campaigns...</p>
+          </div>
+        ) : campaigns.length > 0 ? (
+          campaigns.map((campaign) => {
+            const progress = campaign.status === 'completed' ? 100 : 
+                           campaign.status === 'active' ? 75 : 
+                           campaign.status === 'planning' ? 25 : 10;
+            
+            return (
+              <Card key={campaign.id} className="transition-smooth hover:shadow-elegant border-border/50">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-3">
+                        <CardTitle className="text-foreground">{campaign.name}</CardTitle>
+                        <Badge className={getStatusColor(campaign.status)}>
+                          {campaign.status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{campaign.description}</p>
+                    </div>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground">{campaign.brand}</p>
-                  <p className="text-sm text-muted-foreground max-w-2xl">
-                    {campaign.description}
-                  </p>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Progress Bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Campaign Progress</span>
-                  <span className="font-medium text-foreground">{campaign.progress}%</span>
-                </div>
-                <Progress value={campaign.progress} className="h-2" />
-              </div>
-
-              {/* Campaign Details Grid */}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Budget & Spend</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {campaign.spent} / {campaign.budget}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Influencers</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {campaign.influencers} creators
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Duration</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {campaign.startDate} - {campaign.endDate}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Platforms</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {campaign.platforms.join(", ")}
-                  </p>
-                </div>
-              </div>
-
-              {/* Team Members & Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-muted-foreground">Team:</span>
-                  <div className="flex -space-x-2">
-                    {campaign.teamMembers.map((member, index) => (
-                      <Avatar key={index} className="h-6 w-6 border-2 border-background">
-                        <AvatarFallback className="bg-gradient-primary text-primary-foreground text-xs">
-                          {member}
-                        </AvatarFallback>
-                      </Avatar>
-                    ))}
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Progress Bar */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Campaign Progress</span>
+                      <span className="font-medium text-foreground">{progress}%</span>
+                    </div>
+                    <Progress value={progress} className="h-2" />
                   </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm">
-                    <Eye className="h-3 w-3 mr-1" />
-                    View
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-3 w-3 mr-1" />
-                    Edit
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+
+                  {/* Campaign Details Grid */}
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Budget</p>
+                      <p className="text-sm font-medium text-foreground">
+                        ${campaign.budget?.toLocaleString() || 'Not set'}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Goals</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {campaign.goals?.join(', ') || 'Not set'}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Duration</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {campaign.start_date && campaign.end_date 
+                          ? `${new Date(campaign.start_date).toLocaleDateString()} - ${new Date(campaign.end_date).toLocaleDateString()}`
+                          : 'Not set'}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Target Audience</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {campaign.target_audience || 'Not specified'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-muted-foreground">
+                        Created: {new Date(campaign.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-3 w-3 mr-1" />
+                        Edit
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        ) : (
+          <div className="text-center py-12">
+            <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">No campaigns yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Create your first campaign to start your influencer marketing journey.
+            </p>
+            <NewCampaignDialog />
+          </div>
+        )}
       </div>
     </div>
   );
