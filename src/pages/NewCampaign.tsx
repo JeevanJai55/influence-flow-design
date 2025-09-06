@@ -69,6 +69,7 @@ export default function NewCampaign() {
       ...formData,
       budget: formData.budget ? parseFloat(formData.budget) : undefined,
       goals: formData.platforms, // Using platforms as goals for now
+      status: 'planning',
     };
 
     const result = await createCampaign(campaignData);
