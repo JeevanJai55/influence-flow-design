@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { 
-  LayoutDashboard, 
+  Home,
+  Sparkles, 
   Users, 
-  Target, 
-  Calendar, 
+  Megaphone, 
+  CalendarDays, 
   BarChart3, 
   Settings,
   Search,
   Plus,
-  Star,
   TrendingUp,
   Lightbulb,
   FileText,
-  Link,
-  FolderOpen,
-  Bot
+  Link2,
+  Folder,
+  Bot,
+  Palette,
+  Target,
+  Mail
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -27,19 +30,29 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/dashboard", icon: Home },
+  { title: "Campaigns", url: "/campaigns", icon: Megaphone },
+  { title: "Influencers", url: "/influencers", icon: Users },
   { title: "Content", url: "/content", icon: FileText },
+  { title: "Calendar", url: "/content-calendar", icon: CalendarDays },
+  { title: "Reports", url: "/reports", icon: BarChart3 },
+];
+
+const creativeItems = [
+  { title: "AI Playground", url: "/ai-playground", icon: Bot },
   { title: "Brainstorming", url: "/brainstorming", icon: Lightbulb },
-  { title: "Bio Link", url: "/bio-link", icon: Link },
-  { title: "Calendar", url: "/calendar", icon: Calendar },
-  { title: "Assets", url: "/assets", icon: FolderOpen },
-  { title: "AI Playground", url: "/playground", icon: Bot },
+  { title: "Templates", url: "/templates", icon: Palette },
+  { title: "Bio Link Builder", url: "/bio-link", icon: Link2 },
+  { title: "Brand Assets", url: "/brand-assets", icon: Folder },
+];
+
+const analyticsItems = [
   { title: "Top Performers", url: "/top-performers", icon: TrendingUp },
+  { title: "Trending", url: "/trending", icon: Sparkles },
 ];
 
 export function AppSidebar() {
@@ -54,53 +67,56 @@ export function AppSidebar() {
   };
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    `w-full justify-start transition-smooth ${
+    `w-full justify-start transition-all duration-200 rounded-xl h-12 ${
       isActive 
-        ? "bg-gradient-primary text-primary-foreground shadow-elegant font-medium" 
-        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+        ? "bg-gradient-primary text-primary-foreground shadow-lg font-semibold transform scale-[1.02]" 
+        : "hover:bg-accent/50 text-muted-foreground hover:text-foreground hover:shadow-sm"
     }`;
 
   return (
     <Sidebar
-      className={`border-r border-border/50 ${collapsed ? "w-14" : "w-64 md:w-64"}`}
+      className={`border-r border-border/50 shadow-sm ${collapsed ? "w-16" : "w-72"}`}
       collapsible="icon"
     >
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className="px-4 py-6">
         {/* Logo/Brand */}
-        <div className="mb-6 px-3">
+        <div className="mb-8 px-2">
           {!collapsed ? (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">🚀</span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+                <Sparkles className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-lg bg-gradient-primary bg-clip-text text-transparent">
-                OneInfluence
-              </span>
+              <div className="flex flex-col">
+                <span className="font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">
+                  OneInfluence
+                </span>
+                <span className="text-xs text-muted-foreground">Creative Hub</span>
+              </div>
             </div>
           ) : (
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto">
-              <span className="text-primary-foreground font-bold text-sm">🚀</span>
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto shadow-lg">
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
           )}
         </div>
 
         {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
+        <SidebarGroup className="mb-6">
+          <SidebarGroupLabel className={`px-2 text-xs font-semibold uppercase tracking-wider ${collapsed ? "sr-only" : "text-muted-foreground mb-2"}`}>
             Main
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink 
                       to={item.url} 
-                      end={item.url === "/"}
+                      end={item.url === "/dashboard"}
                       className={getNavCls}
                     >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      {!collapsed && <span className="font-medium">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -109,6 +125,53 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Creative Tools */}
+        <SidebarGroup className="mb-6">
+          <SidebarGroupLabel className={`px-2 text-xs font-semibold uppercase tracking-wider ${collapsed ? "sr-only" : "text-muted-foreground mb-2"}`}>
+            Creative
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-1">
+              {creativeItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink 
+                      to={item.url} 
+                      className={getNavCls}
+                    >
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Analytics */}
+        <SidebarGroup className="mb-6">
+          <SidebarGroupLabel className={`px-2 text-xs font-semibold uppercase tracking-wider ${collapsed ? "sr-only" : "text-muted-foreground mb-2"}`}>
+            Analytics
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-1">
+              {analyticsItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink 
+                      to={item.url} 
+                      className={getNavCls}
+                    >
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         {/* Settings at bottom */}
         <div className="mt-auto">
@@ -119,8 +182,8 @@ export function AppSidebar() {
                   to="/settings" 
                   className={getNavCls}
                 >
-                  <Settings className="h-4 w-4 flex-shrink-0" />
-                  {!collapsed && <span>Settings</span>}
+                  <Settings className="h-5 w-5 flex-shrink-0" />
+                  {!collapsed && <span className="font-medium">Settings</span>}
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
