@@ -90,6 +90,8 @@ All colors MUST be HSL.
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 174 100% 29%;
+
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(174 15% 98%) 100%);
     
     --sidebar-background: 174 60% 15%;
     --sidebar-foreground: 0 0% 98%;
@@ -129,6 +131,8 @@ All colors MUST be HSL.
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 174 100% 35%;
+
+    --gradient-subtle: linear-gradient(180deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 17.5%) 100%);
     
     --sidebar-background: 174 60% 15%;
     --sidebar-foreground: 0 0% 98%;
