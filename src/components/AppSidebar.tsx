@@ -67,7 +67,7 @@ export function AppSidebar() {
   };
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    `w-full justify-start transition-all duration-200 rounded-xl h-12 ${
+    `w-full transition-all duration-200 rounded-xl ${collapsed ? "h-10 justify-center px-2" : "h-12 justify-start"} ${
       isActive 
         ? "bg-gradient-primary text-primary-foreground shadow-lg font-semibold transform scale-[1.02]" 
         : "hover:bg-accent/50 text-muted-foreground hover:text-foreground hover:shadow-sm"
@@ -75,10 +75,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`border-r border-border/50 shadow-sm ${collapsed ? "w-16" : "w-72"}`}
+      className={`border-r border-border/50 shadow-sm ${collapsed ? "w-20" : "w-72"}`}
       collapsible="icon"
     >
-      <SidebarContent className="px-4 py-6">
+      <SidebarContent className={`py-6 ${collapsed ? "px-2" : "px-4"}`}>
         {/* Logo/Brand */}
         <div className="mb-8 px-2">
           {!collapsed ? (
@@ -115,8 +115,8 @@ export function AppSidebar() {
                       end={item.url === "/dashboard"}
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                      <item.icon className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
+                      {!collapsed && <span className="font-medium ml-3">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -139,8 +139,8 @@ export function AppSidebar() {
                       to={item.url} 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                      <item.icon className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
+                      {!collapsed && <span className="font-medium ml-3">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -163,8 +163,8 @@ export function AppSidebar() {
                       to={item.url} 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                      <item.icon className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
+                      {!collapsed && <span className="font-medium ml-3">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -182,8 +182,8 @@ export function AppSidebar() {
                   to="/settings" 
                   className={getNavCls}
                 >
-                  <Settings className="h-5 w-5 flex-shrink-0" />
-                  {!collapsed && <span className="font-medium">Settings</span>}
+                  <Settings className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
+                  {!collapsed && <span className="font-medium ml-3">Settings</span>}
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
