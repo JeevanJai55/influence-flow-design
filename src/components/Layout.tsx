@@ -41,7 +41,7 @@ export default function Layout({ children }: LayoutProps) {
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+          <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
             <div className="flex items-center justify-between h-full px-4 lg:px-8">
               <div className="flex items-center gap-4">
                 <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
