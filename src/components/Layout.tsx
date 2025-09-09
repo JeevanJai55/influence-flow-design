@@ -109,7 +109,7 @@ export default function Layout({ children }: LayoutProps) {
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6 lg:p-8 space-y-8">
+          <main className="flex-1 p-6 lg:p-8 space-y-8 ml-4">
             <div className="max-w-7xl mx-auto">
               {children}
             </div>
