@@ -82,7 +82,7 @@ export function AppSidebar() {
   return (
     <TooltipProvider>
       <Sidebar
-        className={`border-r border-border/50 shadow-sm z-50 ${collapsed ? "w-20" : "w-72"}`}
+        className={`border-r border-border/50 shadow-sm z-50 ${collapsed ? "w-20" : "w-64"}`}
         collapsible="icon"
       >
         <SidebarContent className={`py-6 ${collapsed ? "px-2" : "px-4"} scroll-auto`}>
