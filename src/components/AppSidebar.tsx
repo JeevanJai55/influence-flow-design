@@ -90,8 +90,8 @@ export function AppSidebar() {
         <div className="mb-8 px-2">
           {!collapsed ? (
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-                <Sparkles className="h-5 w-5 text-primary-foreground" />
+              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+                <Sparkles className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">
@@ -101,8 +101,8 @@ export function AppSidebar() {
               </div>
             </div>
           ) : (
-            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto shadow-lg">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
+            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto shadow-lg">
+              <Sparkles className="h-6 w-6 text-primary-foreground" />
             </div>
           )}
         </div>
