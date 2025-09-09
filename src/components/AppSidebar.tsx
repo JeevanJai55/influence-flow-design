@@ -85,7 +85,7 @@ export function AppSidebar() {
         className={`border-r border-border/50 shadow-sm z-50 ${collapsed ? "w-20" : "w-72"}`}
         collapsible="icon"
       >
-        <SidebarContent className={`py-6 ${collapsed ? "px-2" : "px-4"}`}>
+        <SidebarContent className={`py-6 ${collapsed ? "px-2" : "px-4"} scroll-auto`}>
         {/* Logo/Brand */}
         <div className="mb-8 px-2">
           {!collapsed ? (
