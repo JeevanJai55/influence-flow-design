@@ -32,6 +32,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
@@ -74,11 +80,12 @@ export function AppSidebar() {
     }`;
 
   return (
-    <Sidebar
-      className={`border-r border-border/50 shadow-sm ${collapsed ? "w-20" : "w-72"}`}
-      collapsible="icon"
-    >
-      <SidebarContent className={`py-6 ${collapsed ? "px-2" : "px-4"}`}>
+    <TooltipProvider>
+      <Sidebar
+        className={`border-r border-border/50 shadow-sm ${collapsed ? "w-20" : "w-72"}`}
+        collapsible="icon"
+      >
+        <SidebarContent className={`py-6 ${collapsed ? "px-2" : "px-4"}`}>
         {/* Logo/Brand */}
         <div className="mb-8 px-2">
           {!collapsed ? (
@@ -110,14 +117,31 @@ export function AppSidebar() {
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end={item.url === "/dashboard"}
-                      className={getNavCls}
-                    >
-                      <item.icon className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
-                      {!collapsed && <span className="font-medium ml-3">{item.title}</span>}
-                    </NavLink>
+                    {collapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <NavLink 
+                            to={item.url} 
+                            end={item.url === "/dashboard"}
+                            className={getNavCls}
+                          >
+                            <item.icon className="h-5 w-5 flex-shrink-0 mx-auto" />
+                          </NavLink>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <NavLink 
+                        to={item.url} 
+                        end={item.url === "/dashboard"}
+                        className={getNavCls}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="font-medium ml-3">{item.title}</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -135,13 +159,29 @@ export function AppSidebar() {
               {creativeItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      className={getNavCls}
-                    >
-                      <item.icon className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
-                      {!collapsed && <span className="font-medium ml-3">{item.title}</span>}
-                    </NavLink>
+                    {collapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <NavLink 
+                            to={item.url} 
+                            className={getNavCls}
+                          >
+                            <item.icon className="h-5 w-5 flex-shrink-0 mx-auto" />
+                          </NavLink>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <NavLink 
+                        to={item.url} 
+                        className={getNavCls}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="font-medium ml-3">{item.title}</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -159,13 +199,29 @@ export function AppSidebar() {
               {analyticsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      className={getNavCls}
-                    >
-                      <item.icon className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
-                      {!collapsed && <span className="font-medium ml-3">{item.title}</span>}
-                    </NavLink>
+                    {collapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <NavLink 
+                            to={item.url} 
+                            className={getNavCls}
+                          >
+                            <item.icon className="h-5 w-5 flex-shrink-0 mx-auto" />
+                          </NavLink>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <NavLink 
+                        to={item.url} 
+                        className={getNavCls}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="font-medium ml-3">{item.title}</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -178,18 +234,35 @@ export function AppSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <NavLink 
-                  to="/settings" 
-                  className={getNavCls}
-                >
-                  <Settings className={`h-5 w-5 flex-shrink-0 ${collapsed ? "mx-auto" : ""}`} />
-                  {!collapsed && <span className="font-medium ml-3">Settings</span>}
-                </NavLink>
+                {collapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <NavLink 
+                        to="/settings" 
+                        className={getNavCls}
+                      >
+                        <Settings className="h-5 w-5 flex-shrink-0 mx-auto" />
+                      </NavLink>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Settings</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <NavLink 
+                    to="/settings" 
+                    className={getNavCls}
+                  >
+                    <Settings className="h-5 w-5 flex-shrink-0" />
+                    <span className="font-medium ml-3">Settings</span>
+                  </NavLink>
+                )}
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </div>
       </SidebarContent>
     </Sidebar>
+    </TooltipProvider>
   );
 }
