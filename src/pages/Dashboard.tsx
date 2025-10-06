@@ -18,6 +18,7 @@ import { useInfluencers } from "@/hooks/useInfluencers";
 import { useContent } from "@/hooks/useContent";
 import { NewCampaignDialog } from "@/components/NewCampaignDialog";
 import { useNavigate } from "react-router-dom";
+import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -73,6 +74,10 @@ export default function Dashboard() {
       default: return 50;
     }
   };
+
+  if (campaignsLoading || influencersLoading || contentLoading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

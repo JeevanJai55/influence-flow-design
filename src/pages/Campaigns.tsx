@@ -17,6 +17,7 @@ import { useCampaigns } from "@/hooks/useCampaigns";
 import { useInfluencers } from "@/hooks/useInfluencers";
 import { NewCampaignDialog } from "@/components/NewCampaignDialog";
 import { useNavigate } from "react-router-dom";
+import { CampaignsSkeleton } from "@/components/CampaignsSkeleton";
 
 export default function Campaigns() {
   const navigate = useNavigate();
@@ -42,6 +43,10 @@ export default function Campaigns() {
         return "bg-muted text-muted-foreground";
     }
   };
+
+  if (loading) {
+    return <CampaignsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

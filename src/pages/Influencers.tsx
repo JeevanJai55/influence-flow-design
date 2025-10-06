@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useInfluencers } from "@/hooks/useInfluencers";
 import { NewInfluencerDialog } from "@/components/NewInfluencerDialog";
+import { InfluencersSkeleton } from "@/components/InfluencersSkeleton";
 
 export default function Influencers() {
   const { influencers, loading } = useInfluencers();
@@ -58,6 +59,10 @@ export default function Influencers() {
     if (count >= 1000) return `${(count / 1000).toFixed(0)}K`;
     return count.toString();
   };
+
+  if (loading) {
+    return <InfluencersSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

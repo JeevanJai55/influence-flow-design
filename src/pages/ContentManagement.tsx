@@ -32,6 +32,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Confetti from 'react-confetti';
+import { ContentSkeleton } from "@/components/ContentSkeleton";
 
 interface ContentItem {
   id: string;
@@ -292,11 +293,7 @@ export default function ContentManagement() {
   ));
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <ContentSkeleton />;
   }
 
   return (
