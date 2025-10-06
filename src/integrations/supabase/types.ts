@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_assets: {
+        Row: {
+          category: string
+          created_at: string
+          file_url: string | null
+          format: string
+          id: string
+          is_favorite: boolean | null
+          name: string
+          size: number
+          tags: string[] | null
+          thumbnail_url: string | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          file_url?: string | null
+          format: string
+          id?: string
+          is_favorite?: boolean | null
+          name: string
+          size: number
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          file_url?: string | null
+          format?: string
+          id?: string
+          is_favorite?: boolean | null
+          name?: string
+          size?: number
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       calendar_events: {
         Row: {
           all_day: boolean | null
