@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Plus } from 'lucide-react';
 import { useContent } from '@/hooks/useContent';
 
@@ -22,11 +23,20 @@ export const NewContentDialog = ({ trigger }: NewContentDialogProps) => {
     description: '',
     status: 'draft',
     priority: 'medium',
-    platform: 'instagram',
+    platform: [] as string[],
     content_type: 'post',
     due_date: '',
     tags: [] as string[],
   });
+
+  const togglePlatform = (platform: string) => {
+    setFormData(prev => ({
+      ...prev,
+      platform: prev.platform.includes(platform)
+        ? prev.platform.filter(p => p !== platform)
+        : [...prev.platform, platform]
+    }));
+  };
 
   const addTag = (tag: string) => {
     if (tag && !formData.tags.includes(tag)) {
@@ -46,9 +56,15 @@ export const NewContentDialog = ({ trigger }: NewContentDialogProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.platform.length === 0) {
+      return;
+    }
     setLoading(true);
 
-    const result = await createContent(formData);
+    const result = await createContent({
+      ...formData,
+      platform: formData.platform[0], // Use first selected platform for now
+    });
     if (result) {
       setOpen(false);
       setFormData({
@@ -56,7 +72,7 @@ export const NewContentDialog = ({ trigger }: NewContentDialogProps) => {
         description: '',
         status: 'draft',
         priority: 'medium',
-        platform: 'instagram',
+        platform: [],
         content_type: 'post',
         due_date: '',
         tags: [],
@@ -103,18 +119,21 @@ export const NewContentDialog = ({ trigger }: NewContentDialogProps) => {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="platform">Platform</Label>
-              <Select value={formData.platform} onValueChange={(value) => setFormData(prev => ({ ...prev, platform: value }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="instagram">Instagram</SelectItem>
-                  <SelectItem value="youtube">YouTube</SelectItem>
-                  <SelectItem value="tiktok">TikTok</SelectItem>
-                  <SelectItem value="twitter">Twitter</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="platform">Platforms *</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {['instagram', 'youtube', 'tiktok', 'twitter', 'facebook', 'linkedin'].map((platform) => (
+                  <label
+                    key={platform}
+                    className="flex items-center space-x-2 px-3 py-2 border rounded-md hover:bg-muted/50 cursor-pointer transition-colors"
+                  >
+                    <Checkbox
+                      checked={formData.platform.includes(platform)}
+                      onCheckedChange={() => togglePlatform(platform)}
+                    />
+                    <span className="text-sm capitalize">{platform}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="content_type">Content Type</Label>
@@ -198,7 +217,7 @@ export const NewContentDialog = ({ trigger }: NewContentDialogProps) => {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || !formData.title}>
+            <Button type="submit" disabled={loading || !formData.title || formData.platform.length === 0}>
               {loading ? 'Creating...' : 'Create Content'}
             </Button>
           </div>

@@ -164,8 +164,8 @@ export default function BrandAssets() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 animate-fade-in">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Brand Assets</h1>
-          <p className="text-xl text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-foreground">Brand Assets</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Centralized storage for all your brand assets and media files
           </p>
         </div>

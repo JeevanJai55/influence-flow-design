@@ -301,21 +301,16 @@ export default function ContentManagement() {
       {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
       
       {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-foreground flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-              <FileText className="h-6 w-6 text-primary-foreground" />
-            </div>
-            Content Management
-          </h1>
-          <p className="text-lg text-muted-foreground">Organize and track your content creation workflow</p>
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">Content Management</h1>
+          <p className="text-sm text-muted-foreground mt-1">Organize and track your content creation workflow</p>
         </div>
         
         <Dialog open={showNewContentDialog} onOpenChange={setShowNewContentDialog}>
           <DialogTrigger asChild>
-            <Button size="lg" className="bg-gradient-primary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-200">
-              <Plus className="h-5 w-5 mr-2" />
+            <Button className="bg-gradient-primary hover:opacity-90 transition-smooth">
+              <Plus className="h-4 w-4 mr-2" />
               Create Content
             </Button>
           </DialogTrigger>
@@ -427,46 +422,44 @@ export default function ContentManagement() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-card border border-border/50 rounded-xl p-6 shadow-sm">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-4 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder="Search content..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 rounded-xl border-border/50 focus:border-primary/50 transition-all duration-200"
-            />
-          </div>
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-full lg:w-[200px] h-12 rounded-xl border-border/50">
-              <Filter className="h-5 w-5 mr-2" />
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="in-progress">In Progress</SelectItem>
-              <SelectItem value="review">Review</SelectItem>
-              <SelectItem value="scheduled">Scheduled</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="flex flex-col lg:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search content..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
         </div>
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-full lg:w-[180px]">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="in-progress">In Progress</SelectItem>
+            <SelectItem value="review">Review</SelectItem>
+            <SelectItem value="scheduled">Scheduled</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* View Tabs */}
       <Tabs value={currentView} onValueChange={(value: any) => setCurrentView(value)}>
-        <TabsList className="grid w-full grid-cols-3 h-12 bg-muted/30 rounded-xl border border-border/50">
-          <TabsTrigger value="board" className="rounded-lg h-10 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="board">
             <Grid3X3 className="h-4 w-4 mr-2" />
             Board
           </TabsTrigger>
-          <TabsTrigger value="list" className="rounded-lg h-10 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="list">
             <List className="h-4 w-4 mr-2" />
             List
           </TabsTrigger>
-          <TabsTrigger value="calendar" className="rounded-lg h-10 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="calendar">
             <CalendarIcon className="h-4 w-4 mr-2" />
             Calendar
           </TabsTrigger>

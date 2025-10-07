@@ -90,8 +90,8 @@ export default function NewCampaign() {
             </Button>
           </NavLink>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Create New Campaign</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-semibold text-foreground">Create New Campaign</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Set up a new influencer marketing campaign
             </p>
           </div>

@@ -69,8 +69,8 @@ export default function Influencers() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Influencers</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-foreground">Influencers</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Manage your influencer network and discover new talent.
           </p>
         </div>

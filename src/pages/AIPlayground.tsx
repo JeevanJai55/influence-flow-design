@@ -131,11 +131,11 @@ export default function AIPlayground() {
           <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
             <Brain className="h-6 w-6 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-2xl font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             AI Playground
           </h1>
         </div>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto mt-1">
           Harness the power of AI for automation, workflow optimization, and strategic insights
         </p>
       </div>
