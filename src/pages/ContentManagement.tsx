@@ -212,21 +212,21 @@ export default function ContentManagement() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-500/10 text-red-500 border-red-500/20';
-      case 'high': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
-      case 'medium': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
-      case 'low': return 'bg-green-500/10 text-green-500 border-green-500/20';
+      case 'urgent': return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'high': return 'bg-warning/10 text-warning border-warning/20';
+      case 'medium': return 'bg-info/10 text-info border-info/20';
+      case 'low': return 'bg-primary/10 text-primary border-primary/20';
       default: return 'bg-muted text-muted-foreground';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-gray-500/10 text-gray-500';
-      case 'in-progress': return 'bg-blue-500/10 text-blue-500';
-      case 'review': return 'bg-yellow-500/10 text-yellow-500';
-      case 'scheduled': return 'bg-purple-500/10 text-purple-500';
-      case 'published': return 'bg-green-500/10 text-green-500';
+      case 'draft': return 'bg-muted text-muted-foreground';
+      case 'in-progress': return 'bg-info/10 text-info';
+      case 'review': return 'bg-warning/10 text-warning';
+      case 'scheduled': return 'bg-primary/10 text-primary';
+      case 'published': return 'bg-success/10 text-success';
       default: return 'bg-muted text-muted-foreground';
     }
   };
@@ -238,53 +238,53 @@ export default function ContentManagement() {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`mb-4 cursor-move transition-all duration-300 border-border/50 hover:border-primary/20 ${
+          className={`mb-3 cursor-move transition-all duration-300 border-border/50 hover:border-primary/20 ${
             snapshot.isDragging ? 'rotate-1 shadow-xl scale-105 bg-accent/50' : 'hover:shadow-lg'
           }`}
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
+          <CardHeader className="p-4">
+            <div className="flex items-start justify-between gap-2">
               <CardTitle className="text-sm font-semibold line-clamp-2 text-foreground">{item.title}</CardTitle>
-              <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-accent/50">
+              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 hover:bg-accent/50">
                 <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
               </Button>
             </div>
             {item.description && (
-              <CardDescription className="text-xs line-clamp-2 text-muted-foreground">
+              <CardDescription className="text-xs line-clamp-2 text-muted-foreground mt-2">
                 {item.description}
               </CardDescription>
             )}
           </CardHeader>
-          <CardContent className="pt-0 space-y-3">
+          <CardContent className="p-4 pt-0 space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className={`text-xs rounded-full px-2 py-1 ${getPriorityColor(item.priority)}`}>
+              <Badge variant="outline" className={`text-xs rounded-full px-2.5 py-0.5 ${getPriorityColor(item.priority)}`}>
                 {item.priority}
               </Badge>
-              <Badge variant="secondary" className="text-xs rounded-full px-2 py-1 bg-accent/50">
+              <Badge variant="secondary" className="text-xs rounded-full px-2.5 py-0.5 bg-accent/50">
                 {item.platform}
               </Badge>
-              <Badge variant="outline" className="text-xs rounded-full px-2 py-1">
+              <Badge variant="outline" className="text-xs rounded-full px-2.5 py-0.5">
                 {item.content_type}
               </Badge>
             </div>
             {item.due_date && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
+                <Clock className="h-3.5 w-3.5" />
                 <span>{new Date(item.due_date).toLocaleDateString()}</span>
               </div>
             )}
             <div className="flex items-center gap-1 pt-2">
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Eye className="h-3 w-3" />
+              <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Eye className="h-3.5 w-3.5" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Edit3 className="h-3 w-3" />
+              <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Edit3 className="h-3.5 w-3.5" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Share2 className="h-3 w-3" />
+              <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Share2 className="h-3.5 w-3.5" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
-                <Star className="h-3 w-3" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 ml-auto">
+                <Star className="h-3.5 w-3.5" />
               </Button>
             </div>
           </CardContent>
@@ -322,29 +322,27 @@ export default function ContentManagement() {
                 Add a new content item to your workflow board.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-foreground dark:text-foreground">Title</label>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Title</label>
                 <Input
                   value={newContentForm.title}
                   onChange={(e) => setNewContentForm(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="Content title..."
-                  className="mt-1"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-foreground dark:text-foreground">Description</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Description</label>
                 <Textarea
                   value={newContentForm.description}
                   onChange={(e) => setNewContentForm(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Content description..."
-                  className="mt-1"
                   rows={3}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground dark:text-foreground">Platforms</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Platforms</label>
                   <MultiSelect
                     options={[
                       { label: "Instagram", value: "instagram" },
@@ -357,16 +355,15 @@ export default function ContentManagement() {
                     selected={newContentForm.platforms}
                     onChange={(values) => setNewContentForm(prev => ({ ...prev, platforms: values }))}
                     placeholder="Select platforms..."
-                    className="mt-1"
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground dark:text-foreground">Priority</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Priority</label>
                   <Select 
                     value={newContentForm.priority} 
                     onValueChange={(value: any) => setNewContentForm(prev => ({ ...prev, priority: value }))}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -379,13 +376,13 @@ export default function ContentManagement() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground dark:text-foreground">Content Type</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Content Type</label>
                   <Select 
                     value={newContentForm.content_type} 
                     onValueChange={(value: any) => setNewContentForm(prev => ({ ...prev, content_type: value }))}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -397,17 +394,16 @@ export default function ContentManagement() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground dark:text-foreground">Due Date</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Due Date</label>
                   <Input
                     type="date"
                     value={newContentForm.due_date}
                     onChange={(e) => setNewContentForm(prev => ({ ...prev, due_date: e.target.value }))}
-                    className="mt-1"
                   />
                 </div>
               </div>
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-3 pt-2">
                 <Button onClick={handleCreateContent} className="flex-1">
                   Create Content
                 </Button>

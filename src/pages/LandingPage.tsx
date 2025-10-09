@@ -178,7 +178,7 @@ export default function LandingPage() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Beauty Campaign Q1</span>
-                      <Badge className="bg-green-500/10 text-green-500">On Track</Badge>
+                      <Badge className="bg-success/10 text-success">On Track</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Tech Launch Event</span>
@@ -353,7 +353,7 @@ export default function LandingPage() {
                 icon: Brain,
                 title: "AI Brainstorming",
                 description: "Miro-style flowcharts and mind maps powered by AI to generate content ideas and strategies.",
-                color: "text-green-500",
+                color: "text-success",
                 route: "/brainstorming"
               },
               {

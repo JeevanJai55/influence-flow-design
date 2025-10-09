@@ -142,11 +142,11 @@ export default function Templates() {
   const getFormatColor = (format: string) => {
     switch (format) {
       case "PSD": return "bg-blue-500/10 text-blue-600";
-      case "AI": return "bg-orange-500/10 text-orange-600";
-      case "AE": return "bg-purple-500/10 text-purple-600";
-      case "PDF": return "bg-red-500/10 text-red-600";
-      case "HTML": return "bg-green-500/10 text-green-600";
-      default: return "bg-gray-500/10 text-gray-600";
+      case "AI": return "bg-warning/10 text-warning";
+      case "AE": return "bg-primary/10 text-primary";
+      case "PDF": return "bg-destructive/10 text-destructive";
+      case "HTML": return "bg-success/10 text-success";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 

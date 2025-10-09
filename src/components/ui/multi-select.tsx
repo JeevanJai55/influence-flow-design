@@ -58,12 +58,12 @@ export function MultiSelect({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between min-h-10 h-auto py-2",
+            "w-full justify-between min-h-10 h-auto py-2 px-3",
             !selected.length && "text-muted-foreground",
             className
           )}
         >
-          <div className="flex gap-1 flex-1 mr-2 overflow-x-auto">
+          <div className="flex gap-2 flex-1 mr-2 overflow-x-auto">
             {selected.length > 0 ? (
               selected.map((value) => {
                 const option = options.find((o) => o.value === value)
@@ -71,7 +71,7 @@ export function MultiSelect({
                   <Badge
                     variant="secondary"
                     key={value}
-                    className="shrink-0"
+                    className="shrink-0 px-2 py-1"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleUnselect(value)
@@ -79,7 +79,7 @@ export function MultiSelect({
                   >
                     {option?.label}
                     <button
-                      className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      className="ml-1.5 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleUnselect(value)
@@ -108,13 +108,14 @@ export function MultiSelect({
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search..." />
+          <CommandInput placeholder="Search..." className="h-10" />
           <CommandEmpty>No item found.</CommandEmpty>
-          <CommandGroup className="max-h-64 overflow-auto">
+          <CommandGroup className="max-h-64 overflow-auto p-2">
             {options.map((option) => (
               <CommandItem
                 key={option.value}
                 onSelect={() => handleSelect(option.value)}
+                className="px-2 py-2"
               >
                 <Check
                   className={cn(

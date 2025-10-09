@@ -61,7 +61,7 @@ export default function AIPlayground() {
       name: 'Audience Analyzer',
       description: 'Provides insights on audience behavior and preferences',
       icon: Users,
-      color: 'text-green-500'
+      color: 'text-success'
     },
     {
       id: 'campaign-strategist',

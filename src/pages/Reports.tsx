@@ -116,10 +116,10 @@ export default function Reports() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Completed": return "bg-green-500/10 text-green-600 border-green-200";
-      case "Active": return "bg-blue-500/10 text-blue-600 border-blue-200";
-      case "Scheduled": return "bg-purple-500/10 text-purple-600 border-purple-200";
-      default: return "bg-gray-500/10 text-gray-600";
+      case "Completed": return "bg-success/10 text-success border-success/20";
+      case "Active": return "bg-info/10 text-info border-info/20";
+      case "Scheduled": return "bg-primary/10 text-primary border-primary/20";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -159,7 +159,7 @@ export default function Reports() {
                   <p className="text-sm font-medium text-muted-foreground">{metric.title}</p>
                   <p className="text-2xl font-bold text-foreground">{metric.value}</p>
                   <div className={`flex items-center text-sm ${
-                    metric.changeType === 'positive' ? 'text-green-500' : 'text-red-500'
+                    metric.changeType === 'positive' ? 'text-success' : 'text-destructive'
                   }`}>
                     {metric.changeType === 'positive' ? (
                       <TrendingUp className="h-3 w-3 mr-1" />
@@ -209,11 +209,11 @@ export default function Reports() {
                   </div>
                   <div>
                     <p className="text-muted-foreground">Engagement</p>
-                    <p className="font-semibold text-green-500">{campaign.engagement}</p>
+                    <p className="font-semibold text-success">{campaign.engagement}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">ROI</p>
-                    <p className="font-semibold text-green-500">{campaign.roi}</p>
+                    <p className="font-semibold text-success">{campaign.roi}</p>
                   </div>
                 </div>
                 
@@ -260,7 +260,7 @@ export default function Reports() {
                   </div>
                   <div>
                     <p className="text-muted-foreground">Engagement</p>
-                    <p className="font-semibold text-green-500">{performer.avgEngagement}</p>
+                    <p className="font-semibold text-success">{performer.avgEngagement}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Reach</p>
@@ -295,7 +295,7 @@ export default function Reports() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-green-500">8.9%</p>
+                <p className="font-semibold text-success">8.9%</p>
                 <p className="text-xs text-muted-foreground">engagement</p>
               </div>
             </div>
@@ -311,7 +311,7 @@ export default function Reports() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-green-500">12.3%</p>
+                <p className="font-semibold text-success">12.3%</p>
                 <p className="text-xs text-muted-foreground">engagement</p>
               </div>
             </div>
@@ -327,7 +327,7 @@ export default function Reports() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-green-500">15.7%</p>
+                <p className="font-semibold text-success">15.7%</p>
                 <p className="text-xs text-muted-foreground">engagement</p>
               </div>
             </div>

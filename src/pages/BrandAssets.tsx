@@ -142,12 +142,12 @@ export default function BrandAssets() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'image': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-      case 'video': return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
-      case 'logo': return 'bg-pink-500/10 text-pink-500 border-pink-500/20';
-      case 'template': return 'bg-green-500/10 text-green-500 border-green-500/20';
-      case 'audio': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
-      case 'document': return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+      case 'image': return 'bg-info/10 text-info border-info/20';
+      case 'video': return 'bg-primary/10 text-primary border-primary/20';
+      case 'logo': return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'template': return 'bg-success/10 text-success border-success/20';
+      case 'audio': return 'bg-warning/10 text-warning border-warning/20';
+      case 'document': return 'bg-muted text-muted-foreground border-border';
       default: return 'bg-muted text-muted-foreground';
     }
   };
@@ -254,7 +254,7 @@ export default function BrandAssets() {
             <CardContent className="space-y-3">
               <div className="text-sm space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
                   <span>Logo uploaded</span>
                 </div>
                 <div className="flex items-center gap-2">

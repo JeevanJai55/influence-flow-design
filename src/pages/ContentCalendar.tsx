@@ -86,7 +86,7 @@ export default function ContentCalendar() {
       case 'scheduled': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
       case 'draft': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
       case 'review': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
-      case 'published': return 'bg-green-500/10 text-green-500 border-green-500/20';
+      case 'published': return 'bg-success/10 text-success border-success/20';
       default: return 'bg-muted text-muted-foreground';
     }
   };

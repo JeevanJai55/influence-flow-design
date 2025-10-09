@@ -135,7 +135,7 @@ export default function TopPerformers() {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{metric.title}</p>
                   <p className="text-2xl font-bold text-foreground">{metric.value}</p>
-                  <p className="text-sm text-green-500 flex items-center">
+                  <p className="text-sm text-success flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
                     {metric.change}
                   </p>
@@ -214,7 +214,7 @@ export default function TopPerformers() {
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground">Engagement</p>
-                    <p className="font-semibold text-green-500">{post.engagement}</p>
+                    <p className="font-semibold text-success">{post.engagement}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground">Reach</p>
@@ -222,9 +222,9 @@ export default function TopPerformers() {
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1">
-                      <Heart className="h-3 w-3 text-red-500" />
-                      <MessageCircle className="h-3 w-3 text-blue-500" />
-                      <Share2 className="h-3 w-3 text-green-500" />
+                      <Heart className="h-3 w-3 text-destructive" />
+                      <MessageCircle className="h-3 w-3 text-info" />
+                      <Share2 className="h-3 w-3 text-success" />
                     </div>
                   </div>
                 </div>

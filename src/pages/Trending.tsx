@@ -136,10 +136,10 @@ export default function Trending() {
   ];
 
   const getTrendingScoreColor = (score: number) => {
-    if (score >= 95) return "text-red-500";
-    if (score >= 90) return "text-orange-500";
-    if (score >= 85) return "text-yellow-500";
-    return "text-green-500";
+    if (score >= 95) return "text-destructive";
+    if (score >= 90) return "text-warning";
+    if (score >= 85) return "text-info";
+    return "text-success";
   };
 
   return (
@@ -185,7 +185,7 @@ export default function Trending() {
                   <p className="text-xs text-muted-foreground">{hashtag.posts} posts</p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center text-green-500 text-xs">
+                  <div className="flex items-center text-success text-xs">
                     <ArrowUp className="h-3 w-3 mr-1" />
                     {hashtag.growth}
                   </div>
@@ -214,7 +214,7 @@ export default function Trending() {
                   <Badge variant="outline" className="text-xs">{news.category}</Badge>
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-green-500">{news.engagement} reactions</span>
+                  <span className="text-xs text-success">{news.engagement} reactions</span>
                 </div>
               </div>
             ))}
@@ -243,7 +243,7 @@ export default function Trending() {
                   <Badge variant="secondary" className="text-xs mt-1">{influencer.category}</Badge>
                 </div>
                 <div className="text-right">
-                  <div className="text-green-500 text-xs font-medium">{influencer.growth}</div>
+                  <div className="text-success text-xs font-medium">{influencer.growth}</div>
                   <div className="text-xs text-muted-foreground">{influencer.followers}</div>
                 </div>
               </div>
@@ -321,11 +321,11 @@ export default function Trending() {
                   </div>
                   <div className="text-center">
                     <p className="text-muted-foreground">Engagement</p>
-                    <p className="font-semibold text-green-500">{content.engagement}</p>
+                    <p className="font-semibold text-success">{content.engagement}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-muted-foreground">Growth</p>
-                    <p className="font-semibold text-green-500">{content.growth}</p>
+                    <p className="font-semibold text-success">{content.growth}</p>
                   </div>
                   <Button variant="outline" size="sm" className="text-xs md:text-sm">
                     Analyze
