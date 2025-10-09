@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
@@ -60,7 +61,7 @@ export default function ContentManagement() {
   const [newContentForm, setNewContentForm] = useState({
     title: '',
     description: '',
-    platform: 'instagram' as const,
+    platforms: [] as string[],
     priority: 'medium' as const,
     content_type: 'post' as const,
     due_date: ''
@@ -155,7 +156,7 @@ export default function ContentManagement() {
           user_id: user.id,
           title: newContentForm.title,
           description: newContentForm.description,
-          platform: newContentForm.platform,
+          platform: newContentForm.platforms[0] || 'instagram',
           priority: newContentForm.priority,
           content_type: newContentForm.content_type,
           due_date: newContentForm.due_date || null,
@@ -170,7 +171,7 @@ export default function ContentManagement() {
       setNewContentForm({
         title: '',
         description: '',
-        platform: 'instagram',
+        platforms: [],
         priority: 'medium',
         content_type: 'post',
         due_date: ''
@@ -343,23 +344,21 @@ export default function ContentManagement() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-foreground dark:text-foreground">Platform</label>
-                  <Select 
-                    value={newContentForm.platform} 
-                    onValueChange={(value: any) => setNewContentForm(prev => ({ ...prev, platform: value }))}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="instagram">Instagram</SelectItem>
-                      <SelectItem value="tiktok">TikTok</SelectItem>
-                      <SelectItem value="youtube">YouTube</SelectItem>
-                      <SelectItem value="twitter">Twitter</SelectItem>
-                      <SelectItem value="linkedin">LinkedIn</SelectItem>
-                      <SelectItem value="facebook">Facebook</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <label className="text-sm font-medium text-foreground dark:text-foreground">Platforms</label>
+                  <MultiSelect
+                    options={[
+                      { label: "Instagram", value: "instagram" },
+                      { label: "TikTok", value: "tiktok" },
+                      { label: "YouTube", value: "youtube" },
+                      { label: "Twitter", value: "twitter" },
+                      { label: "LinkedIn", value: "linkedin" },
+                      { label: "Facebook", value: "facebook" },
+                    ]}
+                    selected={newContentForm.platforms}
+                    onChange={(values) => setNewContentForm(prev => ({ ...prev, platforms: values }))}
+                    placeholder="Select platforms..."
+                    className="mt-1"
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground dark:text-foreground">Priority</label>
