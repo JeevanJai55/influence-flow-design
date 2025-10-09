@@ -63,7 +63,7 @@ export function MultiSelect({
             className
           )}
         >
-          <div className="flex gap-1 flex-wrap flex-1 mr-2">
+          <div className="flex gap-1 flex-1 mr-2 overflow-x-auto">
             {selected.length > 0 ? (
               selected.map((value) => {
                 const option = options.find((o) => o.value === value)
@@ -71,7 +71,7 @@ export function MultiSelect({
                   <Badge
                     variant="secondary"
                     key={value}
-                    className="mr-1 my-0.5"
+                    className="shrink-0"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleUnselect(value)
