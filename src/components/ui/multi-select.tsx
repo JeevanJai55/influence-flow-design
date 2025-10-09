@@ -58,12 +58,12 @@ export function MultiSelect({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between",
+            "w-full justify-between min-h-10 h-auto py-2",
             !selected.length && "text-muted-foreground",
             className
           )}
         >
-          <div className="flex gap-1 flex-wrap">
+          <div className="flex gap-1 flex-wrap flex-1 mr-2">
             {selected.length > 0 ? (
               selected.map((value) => {
                 const option = options.find((o) => o.value === value)
@@ -71,7 +71,7 @@ export function MultiSelect({
                   <Badge
                     variant="secondary"
                     key={value}
-                    className="mr-1 mb-1"
+                    className="mr-1 my-0.5"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleUnselect(value)
@@ -103,7 +103,7 @@ export function MultiSelect({
               <span>{placeholder}</span>
             )}
           </div>
-          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 self-center" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
